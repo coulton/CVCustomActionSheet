@@ -10,14 +10,19 @@ Usage
 2. Set CVCustomActionSheetDelegate
 3. Implement delegate methods.
 
-	- (void)actionSheetButtonClicked:(CVCustomActionSheet *)actionSheet withButtonIndex:(NSNumber *)buttonIndex withButtonTitle:(NSString *)buttonTite;
-	- (void)actionSheetCancelled:(CVCustomActionSheet *)actionSheet;
+
+```
+- (void)actionSheetButtonClicked:(CVCustomActionSheet *)actionSheet withButtonIndex:(NSNumber *)buttonIndex withButtonTitle:(NSString *)buttonTite;
+- (void)actionSheetCancelled:(CVCustomActionSheet *)actionSheet;
+```
 
 4. Init and present
 
-	CVCustomActionSheet *actionSheet = [[CVCustomActionSheet alloc] initWithDelegate:self cancelButtonTitle:@"Cancel" otherButtonTitles:@[@"Apples",@"Oranges",@"Bananas"]];
-	[actionSheet show];
 
+```
+CVCustomActionSheet *actionSheet = [[CVCustomActionSheet alloc] initWithDelegate:self cancelButtonTitle:@"Cancel" otherButtonTitles:@[@"Apples",@"Oranges",@"Bananas"]];
+[actionSheet show];
+```
 
 Customization
 ===================
