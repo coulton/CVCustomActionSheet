@@ -6,9 +6,9 @@ A super-simple, customizable iOS 7 - styled ActionSheet.
 Usage
 ===================
 
-1. Import “CVCustomActionSheet.h”
-2. Set CVCustomActionSheetDelegate
-3. Implement delegate methods.
+	Import “CVCustomActionSheet.h”
+	Set CVCustomActionSheetDelegate
+	Implement delegate methods.
 
 
 ```
@@ -16,7 +16,7 @@ Usage
 - (void)actionSheetCancelled:(CVCustomActionSheet *)actionSheet;
 ```
 
-4. Init and present
+	Init and present
 
 
 ```
