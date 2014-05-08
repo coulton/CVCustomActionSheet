@@ -3,6 +3,8 @@ CVCustomActionSheet
 
 A super-simple, customizable iOS 7 - styled ActionSheet.
 
+![ss](https://raw.github.com/coultonvento/CVCustomActionSheet/master/ss.png)
+
 Usage
 ===================
 
