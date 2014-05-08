@@ -7,7 +7,7 @@ Usage
 ===================
 
 1. Import “CVCustomActionSheet.h”
-2. Set <CVCustomActionSheetDelegate>
+2. Set CVCustomActionSheetDelegate
 3. Implement delegate methods.
 
 	- (void)actionSheetButtonClicked:(CVCustomActionSheet *)actionSheet withButtonIndex:(NSNumber *)buttonIndex withButtonTitle:(NSString *)buttonTite;
