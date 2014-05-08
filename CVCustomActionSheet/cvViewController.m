@@ -14,16 +14,34 @@
 
 @implementation cvViewController
 
-- (void)viewDidLoad
-{
+- (void)viewDidLoad {
     [super viewDidLoad];
-	// Do any additional setup after loading the view, typically from a nib.
+    
+    [self setTitle:@"Your Basket"];
+    self.navigationItem.rightBarButtonItem.tintColor = [UIColor colorWithRed:(2.0/255.0) green:(109.0/255.0) blue:(184.0/255.0) alpha:1.0];
 }
 
-- (void)didReceiveMemoryWarning
-{
+- (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
-    // Dispose of any resources that can be recreated.
+}
+
+- (IBAction)showActionSheet {
+    //[[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleLightContent animated:YES];
+    
+    CVCustomActionSheet *actionSheet = [[CVCustomActionSheet alloc] initWithDelegate:self cancelButtonTitle:@"Cancel" otherButtonTitles:@[@"Apples",@"Oranges",@"Bananas"]];
+    [actionSheet show];
+}
+
+- (void)actionSheetButtonClicked:(CVCustomActionSheet *)actionSheet withButtonIndex:(NSNumber *)buttonIndex withButtonTitle:(NSString *)buttonTite {
+    //[[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleLightContent animated:YES];
+    
+    NSLog(@"Pressed button (%@, %@)", buttonIndex, buttonTite);
+}
+
+- (void)actionSheetCancelled:(CVCustomActionSheet *)actionSheet {
+    //[[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleDefault animated:YES];
+    
+    NSLog(@"Cancelled CVCustomActionSheet");
 }
 
 @end

@@ -29,7 +29,7 @@
         UIImage *image = nil;
         UIGraphicsBeginImageContextWithOptions(_window.bounds.size, NO, 0);
         [_window drawViewHierarchyInRect:_window.bounds afterScreenUpdates:NO];
-        image = [UIGraphicsGetImageFromCurrentImageContext() applyBlurWithRadius:3 tintColor:[UIColor colorWithWhite:0.2 alpha:0.5] saturationDeltaFactor:1 maskImage:nil];
+        image = [UIGraphicsGetImageFromCurrentImageContext() applyBlurWithRadius:CV_BACKGROUND_RADIUS tintColor:CV_BACKGROUND_TINT saturationDeltaFactor:1 maskImage:nil];
         UIGraphicsEndImageContext();
             
         _background = [UIButton buttonWithType:UIButtonTypeCustom];
@@ -59,14 +59,12 @@
             option.frame = CGRectMake(15, i * (CV_BUTTON_HEIGHT + 1), 290, CV_BUTTON_HEIGHT);
             [option setTitle:string forState:UIControlStateNormal];
             [option setTitleColor:CV_BUTTON_TEXT forState:UIControlStateNormal];
-            option.titleLabel.font = [UIFont fontWithName:@"OpenSans" size:14];
+            option.titleLabel.font = CV_BUTTON_FONT;
             option.backgroundColor = CV_BUTTON_BG;
             option.tag = i + 2;
-            //if ([otherButtonTitles count] <= CV_BUTTON_COUNT_MAX) {
-                [option addTarget:_actionSheet action:@selector(buttonPress:) forControlEvents:UIControlEventTouchDown];
-                [option addTarget:_actionSheet action:@selector(buttonRelease:) forControlEvents:UIControlEventTouchUpInside];
-                [option addTarget:_actionSheet action:@selector(buttonRelease:) forControlEvents:UIControlEventTouchUpOutside];
-            //}
+            [option addTarget:_actionSheet action:@selector(buttonPress:) forControlEvents:UIControlEventTouchDown];
+            [option addTarget:_actionSheet action:@selector(buttonRelease:) forControlEvents:UIControlEventTouchUpInside];
+            [option addTarget:_actionSheet action:@selector(buttonRelease:) forControlEvents:UIControlEventTouchUpOutside];
             [option addTarget:_actionSheet action:@selector(close:) forControlEvents:UIControlEventTouchUpInside];
             
             if ([otherButtonTitles count] > CV_BUTTON_COUNT_MAX) {
@@ -119,7 +117,7 @@
         }
         [cancel setTitle:cancelButtonTitle forState:UIControlStateNormal];
         [cancel setTitleColor:CV_CANCEL_TEXT forState:UIControlStateNormal];
-        cancel.titleLabel.font = [UIFont fontWithName:@"OpenSans" size:14];
+        cancel.titleLabel.font = CV_BUTTON_FONT;
         cancel.backgroundColor = CV_CANCEL_BG;
         [cancel addTarget:_actionSheet action:@selector(cancel:) forControlEvents:UIControlEventTouchUpInside];
         [cancel addTarget:_actionSheet action:@selector(buttonPress:) forControlEvents:UIControlEventTouchDown];

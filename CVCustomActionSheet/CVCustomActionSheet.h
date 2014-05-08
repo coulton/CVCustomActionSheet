@@ -8,16 +8,20 @@
 
 #import <Foundation/Foundation.h>
 
+#define CV_BACKGROUND_RADIUS 4
+#define CV_BACKGROUND_TINT [UIColor colorWithWhite:0.3 alpha:0.55]
+
 #define CV_BUTTON_COUNT_MAX 5
 #define CV_BUTTON_HEIGHT 44
+#define CV_BUTTON_FONT [UIFont systemFontOfSize:15]
 #define CV_BUTTON_BG [UIColor whiteColor]
 #define CV_BUTTON_TEXT [UIColor blackColor]
 #define CV_BUTTON_BG_HIGHLIGHT [UIColor colorWithRed:(235.0/255.0) green:(235.0/255.0) blue:(235.0/255.0) alpha:1.0]
 #define CV_BUTTON_TEXT_HIGHLIGHT [UIColor blackColor]
 
-#define CV_CANCEL_BG [UIColor colorWithRed:(88.0/255.0) green:(195.0/255.0) blue:(180.0/255.0) alpha:1.0]
+#define CV_CANCEL_BG [UIColor colorWithRed:(2.0/255.0) green:(109.0/255.0) blue:(184.0/255.0) alpha:1.0]
 #define CV_CANCEL_TEXT [UIColor whiteColor]
-#define CV_CANCEL_BG_HIGHLIGHT [UIColor colorWithRed:(88.0/255.0) green:(195.0/255.0) blue:(180.0/255.0) alpha:1.0]
+#define CV_CANCEL_BG_HIGHLIGHT [UIColor colorWithRed:(2.0/255.0) green:(109.0/255.0) blue:(184.0/255.0) alpha:1.0]
 #define CV_CANCEL_TEXT_HIGHLIGHT [UIColor whiteColor]
 
 #define CV_LINE_COLOR [UIColor colorWithRed:(235.0/255.0) green:(235.0/255.0) blue:(235.0/255.0) alpha:1.0]

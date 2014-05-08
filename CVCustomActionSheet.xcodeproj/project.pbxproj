@@ -21,6 +21,9 @@
 		3EC5DA1F191B302000653A38 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3EC5DA01191B302000653A38 /* UIKit.framework */; };
 		3EC5DA27191B302000653A38 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 3EC5DA25191B302000653A38 /* InfoPlist.strings */; };
 		3EC5DA29191B302000653A38 /* CVCustomActionSheetTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 3EC5DA28191B302000653A38 /* CVCustomActionSheetTests.m */; };
+		3EC5DA34191B303100653A38 /* CVCustomActionSheet.m in Sources */ = {isa = PBXBuildFile; fileRef = 3EC5DA33191B303100653A38 /* CVCustomActionSheet.m */; };
+		3EC5DA37191B313A00653A38 /* UIImage+ImageEffects.m in Sources */ = {isa = PBXBuildFile; fileRef = 3EC5DA36191B313A00653A38 /* UIImage+ImageEffects.m */; };
+		3EC5DA39191B325900653A38 /* fruits.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 3EC5DA38191B325900653A38 /* fruits.jpg */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -53,6 +56,11 @@
 		3EC5DA24191B302000653A38 /* CVCustomActionSheetTests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "CVCustomActionSheetTests-Info.plist"; sourceTree = "<group>"; };
 		3EC5DA26191B302000653A38 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		3EC5DA28191B302000653A38 /* CVCustomActionSheetTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CVCustomActionSheetTests.m; sourceTree = "<group>"; };
+		3EC5DA32191B303100653A38 /* CVCustomActionSheet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CVCustomActionSheet.h; sourceTree = "<group>"; };
+		3EC5DA33191B303100653A38 /* CVCustomActionSheet.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CVCustomActionSheet.m; sourceTree = "<group>"; };
+		3EC5DA35191B313A00653A38 /* UIImage+ImageEffects.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIImage+ImageEffects.h"; sourceTree = "<group>"; };
+		3EC5DA36191B313A00653A38 /* UIImage+ImageEffects.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIImage+ImageEffects.m"; sourceTree = "<group>"; };
+		3EC5DA38191B325900653A38 /* fruits.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = fruits.jpg; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -112,6 +120,10 @@
 		3EC5DA03191B302000653A38 /* CVCustomActionSheet */ = {
 			isa = PBXGroup;
 			children = (
+				3EC5DA35191B313A00653A38 /* UIImage+ImageEffects.h */,
+				3EC5DA36191B313A00653A38 /* UIImage+ImageEffects.m */,
+				3EC5DA32191B303100653A38 /* CVCustomActionSheet.h */,
+				3EC5DA33191B303100653A38 /* CVCustomActionSheet.m */,
 				3EC5DA0C191B302000653A38 /* cvAppDelegate.h */,
 				3EC5DA0D191B302000653A38 /* cvAppDelegate.m */,
 				3EC5DA0F191B302000653A38 /* Main.storyboard */,
@@ -126,6 +138,7 @@
 		3EC5DA04191B302000653A38 /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
+				3EC5DA38191B325900653A38 /* fruits.jpg */,
 				3EC5DA05191B302000653A38 /* CVCustomActionSheet-Info.plist */,
 				3EC5DA06191B302000653A38 /* InfoPlist.strings */,
 				3EC5DA09191B302000653A38 /* main.m */,
@@ -231,6 +244,7 @@
 			files = (
 				3EC5DA16191B302000653A38 /* Images.xcassets in Resources */,
 				3EC5DA08191B302000653A38 /* InfoPlist.strings in Resources */,
+				3EC5DA39191B325900653A38 /* fruits.jpg in Resources */,
 				3EC5DA11191B302000653A38 /* Main.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -251,8 +265,10 @@
 			buildActionMask = 2147483647;
 			files = (
 				3EC5DA0A191B302000653A38 /* main.m in Sources */,
+				3EC5DA37191B313A00653A38 /* UIImage+ImageEffects.m in Sources */,
 				3EC5DA14191B302000653A38 /* cvViewController.m in Sources */,
 				3EC5DA0E191B302000653A38 /* cvAppDelegate.m in Sources */,
+				3EC5DA34191B303100653A38 /* CVCustomActionSheet.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -380,6 +396,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "CVCustomActionSheet/CVCustomActionSheet-Prefix.pch";
 				INFOPLIST_FILE = "CVCustomActionSheet/CVCustomActionSheet-Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = app;
 			};
@@ -393,6 +410,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "CVCustomActionSheet/CVCustomActionSheet-Prefix.pch";
 				INFOPLIST_FILE = "CVCustomActionSheet/CVCustomActionSheet-Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = app;
 			};
