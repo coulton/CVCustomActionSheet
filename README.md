@@ -14,7 +14,7 @@ Usage
 
 
 ```
-- (void)actionSheetButtonClicked:(CVCustomActionSheet *)actionSheet withButtonIndex:(NSNumber *)buttonIndex withButtonTitle:(NSString *)buttonTite;
+- (void)actionSheetButtonClicked:(CVCustomActionSheet *)actionSheet withButtonIndex:(NSNumber *)buttonIndex withButtonTitle:(NSString *)buttonTitle;
 - (void)actionSheetCancelled:(CVCustomActionSheet *)actionSheet;
 ```
 
