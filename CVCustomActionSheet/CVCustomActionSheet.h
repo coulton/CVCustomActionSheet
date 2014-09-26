@@ -30,7 +30,7 @@
 @property (nonatomic, retain) id <CVCustomActionSheetDelegate> delegate;
 @property (nonatomic, strong) CVCustomActionSheet *actionSheet;
 @property (nonatomic, assign) NSInteger *tag;
-@property (nonatomic, assign) UIColor *buttonBackgroundColor, *selectedButtonBackgroundColor, *buttonTextColor, *selectedButtonTextColor, *cancelBackgroundColor, *selectedCancelBackgroundColor, *cancelTextColor, *selectedCancelTextColor, *lineColor;
-@property (nonatomic, assign) UIFont *buttonFont;
+@property (nonatomic, strong) UIColor *buttonBackgroundColor, *selectedButtonBackgroundColor, *buttonTextColor, *selectedButtonTextColor, *cancelBackgroundColor, *selectedCancelBackgroundColor, *cancelTextColor, *selectedCancelTextColor, *lineColor;
+@property (nonatomic, strong) UIFont *buttonFont;
 
 @end
