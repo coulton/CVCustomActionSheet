@@ -14,7 +14,7 @@ typedef void (^CVCancelPressed)();
 @interface CVCustomActionSheet : NSObject <UIScrollViewDelegate>
 
 - (id)initWithOptions:(NSArray *)options andCancelButtonTitle:(NSString*)cancelButtonTitle;
-- (void)show:(CVCancelPressed)cancelBlock optionPressed:(CVOptionPressed)optionBlock;
+- (void)show:(void(^)())showBlock cancelPressed:(CVCancelPressed)cancelBlock optionPressed:(CVOptionPressed)optionBlock;
 
 @property (nonatomic, assign) NSInteger *tag;
 @property (nonatomic, strong) UIColor *buttonBackgroundColor, *selectedButtonBackgroundColor, *buttonTextColor, *selectedButtonTextColor, *cancelBackgroundColor, *selectedCancelBackgroundColor, *cancelTextColor, *selectedCancelTextColor, *lineColor;

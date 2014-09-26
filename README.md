@@ -1,7 +1,7 @@
 CVCustomActionSheet
 ===================
 
-A super-simple, customizable iOS 7 - styled ActionSheet.
+A super-simple, customizable iOS 8 - styled ActionSheet... Now with blocks!
 
 ![ss](https://raw.github.com/coultonvento/CVCustomActionSheet/master/ss.png)
 
@@ -9,21 +9,16 @@ Usage
 ===================
 
 - Import “CVCustomActionSheet.h”
-- Set CVCustomActionSheetDelegate
-- Implement delegate methods.
-
-
-```
-- (void)actionSheetButtonClicked:(CVCustomActionSheet *)actionSheet withButtonIndex:(NSNumber *)buttonIndex withButtonTitle:(NSString *)buttonTitle;
-- (void)actionSheetCancelled:(CVCustomActionSheet *)actionSheet;
-```
-
 - Init and present
 
 
 ```
-CVCustomActionSheet *actionSheet = [[CVCustomActionSheet alloc] initWithDelegate:self cancelButtonTitle:@"Cancel" otherButtonTitles:@[@"Apples",@"Oranges",@"Bananas"]];
-[actionSheet show];
+CVCustomActionSheet *actionSheet = [[CVCustomActionSheet alloc] initWithOptions:@[@"Apples", @"Oranges", @"Bananas"] andCancelButtonTitle:@"Cancel"];
+[actionSheet show:^{
+	// Canceled
+} optionPressed:^(NSInteger buttonIndex, NSString *buttonTitle) {
+	// Button pressed
+}];
 ```
 
 Customization

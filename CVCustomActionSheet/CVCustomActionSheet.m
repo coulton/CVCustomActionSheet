@@ -54,102 +54,104 @@ NSInteger const buttonCountMax = 4;
 {
     self = [super init];
     if (self) {
-        cancelTitle = cancelButtonTitle;
-        [self setDefaults];
-        
         self.window = [UIApplication sharedApplication].keyWindow;
         self.actionSheet = self;
+        
+        cancelTitle = cancelButtonTitle;
         optionTitles = options;
-        
-        UIVisualEffect *effect = [UIBlurEffect effectWithStyle:UIBlurEffectStyleDark];
-        self.backgroundView = [[UIVisualEffectView alloc] initWithEffect:effect];
-        self.backgroundView.frame = kScreenSize;
-        [self.window addSubview:self.backgroundView];
-        
-        UITapGestureRecognizer *tapGesture = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(cancel:)];
-        [self.backgroundView addGestureRecognizer:tapGesture];
-        
-        self.contentView = [[UIView alloc] initWithFrame:kScreenSize];
-        
-        if ([options count] > buttonCountMax) {
-            CGRect frame = CGRectMake(buttonMargin, 0, kButtonWidth, buttonHeight * buttonCountMax);
-            self.scrollView = [[UIScrollView alloc] initWithFrame:frame];
-            self.scrollView.backgroundColor = self.buttonBackgroundColor;
-            self.scrollView.delegate = self.actionSheet;
-            self.scrollView.showsVerticalScrollIndicator = NO;
-            
-            self.scrollView.contentSize = CGSizeMake(kButtonWidth, ((buttonHeight + 1) * [options count]) - 1);
-            [self.contentView addSubview:self.scrollView];
-        }
-        
-        int i = 0;
-        for (NSString *buttonTitle in options) {
-            
-            // Single option
-            UIButton *optionButton = [self optionButton];
-            [optionButton setTitle:buttonTitle forState:UIControlStateNormal];
-            
-            if ([options count] > buttonCountMax) {
-                
-                optionButton.frame = CGRectMake(0, i * (buttonHeight + 1), kButtonWidth, buttonHeight);
-                [self.scrollView addSubview:optionButton];
-            } else {
-                
-                optionButton.frame = CGRectMake(buttonMargin, i * (buttonHeight + 1), kButtonWidth, buttonHeight);
-                [self.contentView addSubview:optionButton];
-            }
-            
-            // Line
-            if (i < [options count] - 1) {
-                CALayer *line = [CALayer layer];
-                line.backgroundColor = self.lineColor.CGColor;
-                
-                if ([options count] > buttonCountMax) {
-                    
-                    line.frame = CGRectMake(0, optionButton.frame.origin.y + buttonHeight, kButtonWidth, 1);
-                    [self.scrollView.layer addSublayer:line];
-                } else {
-                    
-                    line.frame = CGRectMake(buttonMargin, optionButton.frame.origin.y + buttonHeight, kButtonWidth, 1);
-                    [self.contentView.layer addSublayer:line];
-                }
-            }
-            
-            i++;
-        }
-        
-        if ([options count] > buttonCountMax) {
-            
-            CALayer *lineTop = [CALayer layer];
-            lineTop.backgroundColor = self.lineColor.CGColor;
-            lineTop.frame = CGRectMake(0, -1, kButtonWidth, 1);
-            [self.scrollView.layer addSublayer:lineTop];
-            
-            CALayer *lineBottom = [CALayer layer];
-            lineBottom.backgroundColor = self.lineColor.CGColor;
-            lineBottom.frame = CGRectMake(0, self.scrollView.contentSize.height, kButtonWidth, 1);
-            [self.scrollView.layer addSublayer:lineBottom];
-        }
-        
-        // Cancel
-        UIButton *cancel = [self cancelButton];
-        if ([options count] > buttonCountMax) {
-            cancel.frame = CGRectMake(buttonMargin, buttonCountMax * (buttonHeight + 1) + (buttonMargin/2), kButtonWidth, buttonHeight);
-        } else {
-            cancel.frame = CGRectMake(buttonMargin, (i * (buttonHeight + 1)) + (buttonMargin/2), kButtonWidth, buttonHeight);
-        }
-        [cancel setTitle:cancelButtonTitle forState:UIControlStateNormal];
-        [self.contentView addSubview:cancel];
-        
-        // Content frame
-        CGRect frame = self.contentView.frame;
-        frame.size.height = cancel.frame.origin.y + cancel.frame.size.height;
-        frame.origin.y = kScreenSize.size.height;
-        self.contentView.frame = frame;
-        [self.window addSubview:self.contentView];
-    
+        [self setDefaults];
     }
     return self;
+}
+
+- (void)setup
+{
+    UIVisualEffect *effect = [UIBlurEffect effectWithStyle:UIBlurEffectStyleDark];
+    self.backgroundView = [[UIVisualEffectView alloc] initWithEffect:effect];
+    self.backgroundView.frame = kScreenSize;
+    [self.window addSubview:self.backgroundView];
+    
+    UITapGestureRecognizer *tapGesture = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(cancel:)];
+    [self.backgroundView addGestureRecognizer:tapGesture];
+    
+    self.contentView = [[UIView alloc] initWithFrame:kScreenSize];
+    
+    if ([optionTitles count] > buttonCountMax) {
+        CGRect frame = CGRectMake(buttonMargin, 0, kButtonWidth, buttonHeight * buttonCountMax);
+        self.scrollView = [[UIScrollView alloc] initWithFrame:frame];
+        self.scrollView.backgroundColor = self.buttonBackgroundColor;
+        self.scrollView.delegate = self.actionSheet;
+        self.scrollView.showsVerticalScrollIndicator = NO;
+        
+        self.scrollView.contentSize = CGSizeMake(kButtonWidth, ((buttonHeight + 1) * [optionTitles count]) - 1);
+        [self.contentView addSubview:self.scrollView];
+    }
+    
+    int i = 0;
+    for (NSString *buttonTitle in optionTitles) {
+        
+        // Single option
+        UIButton *optionButton = [self optionButton];
+        [optionButton setTitle:buttonTitle forState:UIControlStateNormal];
+        
+        if ([optionTitles count] > buttonCountMax) {
+            
+            optionButton.frame = CGRectMake(0, i * (buttonHeight + 1), kButtonWidth, buttonHeight);
+            [self.scrollView addSubview:optionButton];
+        } else {
+            
+            optionButton.frame = CGRectMake(buttonMargin, i * (buttonHeight + 1), kButtonWidth, buttonHeight);
+            [self.contentView addSubview:optionButton];
+        }
+        
+        // Line
+        if (i < [optionTitles count] - 1) {
+            CALayer *line = [CALayer layer];
+            line.backgroundColor = self.lineColor.CGColor;
+            
+            if ([optionTitles count] > buttonCountMax) {
+                
+                line.frame = CGRectMake(0, optionButton.frame.origin.y + buttonHeight, kButtonWidth, 1);
+                [self.scrollView.layer addSublayer:line];
+            } else {
+                
+                line.frame = CGRectMake(buttonMargin, optionButton.frame.origin.y + buttonHeight, kButtonWidth, 1);
+                [self.contentView.layer addSublayer:line];
+            }
+        }
+        
+        i++;
+    }
+    
+    if ([optionTitles count] > buttonCountMax) {
+        
+        CALayer *lineTop = [CALayer layer];
+        lineTop.backgroundColor = self.lineColor.CGColor;
+        lineTop.frame = CGRectMake(0, -1, kButtonWidth, 1);
+        [self.scrollView.layer addSublayer:lineTop];
+        
+        CALayer *lineBottom = [CALayer layer];
+        lineBottom.backgroundColor = self.lineColor.CGColor;
+        lineBottom.frame = CGRectMake(0, self.scrollView.contentSize.height, kButtonWidth, 1);
+        [self.scrollView.layer addSublayer:lineBottom];
+    }
+    
+    // Cancel
+    UIButton *cancel = [self cancelButton];
+    if ([optionTitles count] > buttonCountMax) {
+        cancel.frame = CGRectMake(buttonMargin, buttonCountMax * (buttonHeight + 1) + (buttonMargin/2), kButtonWidth, buttonHeight);
+    } else {
+        cancel.frame = CGRectMake(buttonMargin, (i * (buttonHeight + 1)) + (buttonMargin/2), kButtonWidth, buttonHeight);
+    }
+    [cancel setTitle:cancelTitle forState:UIControlStateNormal];
+    [self.contentView addSubview:cancel];
+    
+    // Content frame
+    CGRect frame = self.contentView.frame;
+    frame.size.height = cancel.frame.origin.y + cancel.frame.size.height;
+    frame.origin.y = kScreenSize.size.height;
+    self.contentView.frame = frame;
+    [self.window addSubview:self.contentView];
 }
 
 #pragma mark Properties
@@ -209,11 +211,14 @@ NSInteger const buttonCountMax = 4;
 #pragma mark - Buttons
 #pragma mark Actions
 
-- (void)show:(CVCancelPressed)cancelBlock
+
+- (void)show:(void(^)())showBlock
+cancelPressed:(CVCancelPressed)cancelBlock
 optionPressed:(CVOptionPressed)optionBlock
 {
     self.cancelCompletion = cancelBlock;
     self.optionCompletion = optionBlock;
+    [self setup];
     
     [UIView animateWithDuration:0.2
                           delay:0.0
@@ -234,6 +239,8 @@ optionPressed:(CVOptionPressed)optionBlock
                             CGRect frame = self.contentView.frame;
                             frame.origin.y = kScreenSize.size.height - self.contentView.frame.size.height - buttonMargin;
                             self.contentView.frame = frame;
+                            
+                            if (showBlock) showBlock();
                             
                         }
                      completion:nil];
@@ -274,8 +281,7 @@ optionPressed:(CVOptionPressed)optionBlock
     
     [self dismiss:^{
         
-        if (self.optionCompletion)
-            self.optionCompletion(buttonIndex, button.titleLabel.text);
+        if (self.optionCompletion) self.optionCompletion(buttonIndex, button.titleLabel.text);
     }];
 }
 

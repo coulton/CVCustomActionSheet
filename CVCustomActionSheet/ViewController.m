@@ -26,13 +26,14 @@
 
 - (IBAction)showActionSheet
 {
-    NSArray *buttons = @[ @"Apples", @"1", @"2", @"3", @"4" ];
+    NSArray *buttons = @[ @"Apples", @"Oranges", @"Bananas" ];
     CVCustomActionSheet *actionSheet = [[CVCustomActionSheet alloc] initWithOptions:buttons
                                                                andCancelButtonTitle:@"Cancel"];
     
     [actionSheet show:nil
+        cancelPressed:nil
         optionPressed:^(NSInteger buttonIndex, NSString *buttonTitle) {
-           
+            
             NSLog(@"Pressed button: %@ (%ld)", buttonTitle, (long)buttonIndex);
         }];
 }
