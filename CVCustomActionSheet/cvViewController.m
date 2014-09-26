@@ -27,7 +27,7 @@
 
 - (IBAction)showActionSheet
 {
-    NSArray *buttons = @[ @"Apples", @"Oranges", @"Bananas" ];
+    NSArray *buttons = @[ @"Apples", @"Oranges", @"Bananas", @"Oranges", @"Bananas", @"Bananas" ];
     CVCustomActionSheet *actionSheet = [[CVCustomActionSheet alloc] initWithButtons:buttons
                                                                andCancelButtonTitle:@"Cancel"];
     [actionSheet show];

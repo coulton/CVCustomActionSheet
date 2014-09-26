@@ -18,13 +18,13 @@ NSInteger const buttonCountMax = 4;
 @interface CVCustomActionSheet () {
     NSString *cancelTitle;
     NSArray *buttonTitles;
-    
-    UIView *contentView;
-    UIScrollView *scrollView;
-    UIVisualEffectView *backgroundView;
 }
 
 @property (nonatomic, strong) UIWindow *window;
+@property (nonatomic, strong) UIScrollView *scrollView;
+@property (nonatomic, strong) UIView *contentView;
+@property (nonatomic, strong) UIVisualEffectView *backgroundView;
+
 @property (nonatomic, strong) CVCustomActionSheet *actionSheet;
 @property (nonatomic, readonly) UIButton *cancelButton, *optionButton;
 @end
@@ -60,21 +60,24 @@ NSInteger const buttonCountMax = 4;
         buttonTitles = buttons;
         
         UIVisualEffect *effect = [UIBlurEffect effectWithStyle:UIBlurEffectStyleDark];
-        backgroundView = [[UIVisualEffectView alloc] initWithEffect:effect];
-        backgroundView.frame = kScreenSize;
-        [self.window addSubview:backgroundView];
+        self.backgroundView = [[UIVisualEffectView alloc] initWithEffect:effect];
+        self.backgroundView.frame = kScreenSize;
+        [self.window addSubview:self.backgroundView];
         
-        contentView = [[UIView alloc] initWithFrame:kScreenSize];
+        UITapGestureRecognizer *tapGesture = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(cancel:)];
+        [self.backgroundView addGestureRecognizer:tapGesture];
+        
+        self.contentView = [[UIView alloc] initWithFrame:kScreenSize];
         
         if ([buttons count] > buttonCountMax) {
             CGRect frame = CGRectMake(buttonMargin, 0, kButtonWidth, buttonHeight * buttonCountMax);
-            scrollView = [[UIScrollView alloc] initWithFrame:frame];
-            scrollView.backgroundColor = self.buttonBackgroundColor;
-            scrollView.delegate = self.actionSheet;
-            scrollView.showsVerticalScrollIndicator = NO;
+            self.scrollView = [[UIScrollView alloc] initWithFrame:frame];
+            self.scrollView.backgroundColor = self.buttonBackgroundColor;
+            self.scrollView.delegate = self.actionSheet;
+            self.scrollView.showsVerticalScrollIndicator = NO;
             
-            scrollView.contentSize = CGSizeMake(kButtonWidth, ((buttonHeight + 1) * [buttons count]) - 1);
-            [contentView addSubview:scrollView];
+            self.scrollView.contentSize = CGSizeMake(kButtonWidth, ((buttonHeight + 1) * [buttons count]) - 1);
+            [self.contentView addSubview:self.scrollView];
         }
         
         int i = 0;
@@ -87,11 +90,11 @@ NSInteger const buttonCountMax = 4;
             if ([buttons count] > buttonCountMax) {
                 
                 optionButton.frame = CGRectMake(0, i * (buttonHeight + 1), kButtonWidth, buttonHeight);
-                [scrollView addSubview:optionButton];
+                [self.scrollView addSubview:optionButton];
             } else {
                 
                 optionButton.frame = CGRectMake(buttonMargin, i * (buttonHeight + 1), kButtonWidth, buttonHeight);
-                [contentView addSubview:optionButton];
+                [self.contentView addSubview:optionButton];
             }
             
             // Line
@@ -102,11 +105,11 @@ NSInteger const buttonCountMax = 4;
                 if ([buttons count] > buttonCountMax) {
                     
                     line.frame = CGRectMake(0, optionButton.frame.origin.y + buttonHeight, kButtonWidth, 1);
-                    [scrollView.layer addSublayer:line];
+                    [self.scrollView.layer addSublayer:line];
                 } else {
                     
                     line.frame = CGRectMake(buttonMargin, optionButton.frame.origin.y + buttonHeight, kButtonWidth, 1);
-                    [contentView.layer addSublayer:line];
+                    [self.contentView.layer addSublayer:line];
                 }
             }
             
@@ -118,12 +121,12 @@ NSInteger const buttonCountMax = 4;
             CALayer *lineTop = [CALayer layer];
             lineTop.backgroundColor = self.lineColor.CGColor;
             lineTop.frame = CGRectMake(0, -1, kButtonWidth, 1);
-            [scrollView.layer addSublayer:lineTop];
+            [self.scrollView.layer addSublayer:lineTop];
             
             CALayer *lineBottom = [CALayer layer];
             lineBottom.backgroundColor = self.lineColor.CGColor;
-            lineBottom.frame = CGRectMake(0, scrollView.contentSize.height, kButtonWidth, 1);
-            [scrollView.layer addSublayer:lineBottom];
+            lineBottom.frame = CGRectMake(0, self.scrollView.contentSize.height, kButtonWidth, 1);
+            [self.scrollView.layer addSublayer:lineBottom];
         }
         
         // Cancel
@@ -134,14 +137,14 @@ NSInteger const buttonCountMax = 4;
             cancel.frame = CGRectMake(buttonMargin, (i * (buttonHeight + 1)) + 7.5f, kButtonWidth, buttonHeight);
         }
         [cancel setTitle:cancelButtonTitle forState:UIControlStateNormal];
-        [contentView addSubview:cancel];
+        [self.contentView addSubview:cancel];
         
         // Content frame
-        CGRect frame = contentView.frame;
+        CGRect frame = self.contentView.frame;
         frame.size.height = cancel.frame.origin.y + cancel.frame.size.height;
         frame.origin.y = kScreenSize.size.height;
-        contentView.frame = frame;
-        [self.window addSubview:contentView];
+        self.contentView.frame = frame;
+        [self.window addSubview:self.contentView];
     
     }
     return self;
@@ -211,8 +214,8 @@ NSInteger const buttonCountMax = 4;
                         options:UIViewAnimationOptionCurveEaseInOut
                      animations:^(void){
                          
-                         contentView.alpha = 1.0;
-                         backgroundView.alpha = 1.0f;
+                         self.contentView.alpha = 1.0;
+                         self.backgroundView.alpha = 1.0f;
                          
                      } completion:nil];
     
@@ -222,29 +225,42 @@ NSInteger const buttonCountMax = 4;
           initialSpringVelocity:0.0
                         options:UIViewAnimationOptionCurveEaseIn animations:^(void) {
                             
-                            CGRect frame = contentView.frame;
-                            frame.origin.y = kScreenSize.size.height - contentView.frame.size.height - buttonMargin;
-                            contentView.frame = frame;
+                            CGRect frame = self.contentView.frame;
+                            frame.origin.y = kScreenSize.size.height - self.contentView.frame.size.height - buttonMargin;
+                            self.contentView.frame = frame;
                             
                         }
                      completion:nil];
 }
 
+- (void)dismiss:(void(^)())completed
+{
+    [UIView animateWithDuration:0.2
+                          delay:0.0
+                        options:UIViewAnimationOptionCurveEaseInOut
+                     animations:^(void){
+                         
+                         self.backgroundView.alpha = 0.0;
+                         
+                         CGRect frame = self.contentView.frame;
+                         frame.origin.y = kScreenSize.size.height;
+                         self.contentView.frame = frame;
+                         
+                     }
+                     completion:^(BOOL finish){
+                         
+                         [self.backgroundView removeFromSuperview];
+                         self.backgroundView = nil;
+                         self.actionSheet = nil;
+                        
+                         if (completed) completed();
+                         
+                     }];
+}
+
 - (void)close:(id)sender
 {
-    [UIView animateWithDuration:0.15 delay:0.0 options:UIViewAnimationOptionCurveEaseInOut animations:^(void){
-        
-        backgroundView.alpha = 0.0;
-        
-        CGRect frame = contentView.frame;
-        frame.origin.y = kScreenSize.size.height;
-        contentView.frame = frame;
-        
-    } completion:^(BOOL finish){
-        
-        [backgroundView removeFromSuperview];
-        backgroundView = nil;
-        self.actionSheet = nil;
+    [self dismiss:^{
         
 //        [self.delegate actionSheetButtonClicked:self.actionSheet
 //                                withButtonIndex:[NSNumber numberWithInt:index]
@@ -255,21 +271,9 @@ NSInteger const buttonCountMax = 4;
 
 - (void)cancel:(id)sender
 {
-    [UIView animateWithDuration:0.15 delay:0.0 options:UIViewAnimationOptionCurveEaseInOut animations:^(void){
-    
-        backgroundView.alpha = 0.0;
+    [self dismiss:^{
         
-        CGRect frame = contentView.frame;
-        frame.origin.y = kScreenSize.size.height;
-        contentView.frame = frame;
-    
-    } completion:^(BOOL finish){
-        
-        [backgroundView removeFromSuperview];
-        backgroundView = nil;
-        self.actionSheet = nil;
-        
-        //[self.delegate actionSheetCancelled:self.actionSheet];
+//        [self.delegate actionSheetCancelled:self.actionSheet];
         
     }];
 }
@@ -278,7 +282,7 @@ NSInteger const buttonCountMax = 4;
 
 - (void)scrollViewWillBeginDragging:(UIScrollView *)draggedScrollView
 {
-    for (UIView *subview in scrollView.subviews) {
+    for (UIView *subview in self.scrollView.subviews) {
         
         if (subview.tag == 0) continue;
         [self buttonRelease:subview];
