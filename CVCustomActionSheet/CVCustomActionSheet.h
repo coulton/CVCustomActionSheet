@@ -13,18 +13,6 @@
 
 #define CV_BUTTON_COUNT_MAX 5
 #define CV_BUTTON_HEIGHT 44
-#define CV_BUTTON_FONT [UIFont systemFontOfSize:15]
-#define CV_BUTTON_BG [UIColor whiteColor]
-#define CV_BUTTON_TEXT [UIColor blackColor]
-#define CV_BUTTON_BG_HIGHLIGHT [UIColor colorWithRed:(235.0/255.0) green:(235.0/255.0) blue:(235.0/255.0) alpha:1.0]
-#define CV_BUTTON_TEXT_HIGHLIGHT [UIColor blackColor]
-
-#define CV_CANCEL_BG [UIColor colorWithRed:(2.0/255.0) green:(109.0/255.0) blue:(184.0/255.0) alpha:1.0]
-#define CV_CANCEL_TEXT [UIColor whiteColor]
-#define CV_CANCEL_BG_HIGHLIGHT [UIColor colorWithRed:(2.0/255.0) green:(109.0/255.0) blue:(184.0/255.0) alpha:1.0]
-#define CV_CANCEL_TEXT_HIGHLIGHT [UIColor whiteColor]
-
-#define CV_LINE_COLOR [UIColor colorWithRed:(235.0/255.0) green:(235.0/255.0) blue:(235.0/255.0) alpha:1.0]
 
 @class CVCustomActionSheet;
 @protocol CVCustomActionSheetDelegate
@@ -40,12 +28,9 @@
 - (void)show;
 
 @property (nonatomic, retain) id <CVCustomActionSheetDelegate> delegate;
-@property (nonatomic, retain) UIView *content;
-@property (nonatomic, retain) UIButton *background;
-@property (nonatomic, retain) NSNumber *tag;
-@property (nonatomic, retain) UIWindow *window;
-@property (nonatomic, retain) UIScrollView *scrollView;
-@property (nonatomic, retain) NSArray *otherButtonTitles;
 @property (nonatomic, strong) CVCustomActionSheet *actionSheet;
+@property (nonatomic, assign) NSInteger *tag;
+@property (nonatomic, assign) UIColor *buttonBackgroundColor, *selectedButtonBackgroundColor, *buttonTextColor, *selectedButtonTextColor, *cancelBackgroundColor, *selectedCancelBackgroundColor, *cancelTextColor, *selectedCancelTextColor, *lineColor;
+@property (nonatomic, assign) UIFont *buttonFont;
 
 @end

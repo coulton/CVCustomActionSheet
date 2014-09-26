@@ -19,8 +19,6 @@
 		3EC5DA1D191B302000653A38 /* XCTest.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3EC5DA1C191B302000653A38 /* XCTest.framework */; };
 		3EC5DA1E191B302000653A38 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3EC5D9FD191B302000653A38 /* Foundation.framework */; };
 		3EC5DA1F191B302000653A38 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3EC5DA01191B302000653A38 /* UIKit.framework */; };
-		3EC5DA27191B302000653A38 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 3EC5DA25191B302000653A38 /* InfoPlist.strings */; };
-		3EC5DA29191B302000653A38 /* CVCustomActionSheetTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 3EC5DA28191B302000653A38 /* CVCustomActionSheetTests.m */; };
 		3EC5DA34191B303100653A38 /* CVCustomActionSheet.m in Sources */ = {isa = PBXBuildFile; fileRef = 3EC5DA33191B303100653A38 /* CVCustomActionSheet.m */; };
 		3EC5DA37191B313A00653A38 /* UIImage+ImageEffects.m in Sources */ = {isa = PBXBuildFile; fileRef = 3EC5DA36191B313A00653A38 /* UIImage+ImageEffects.m */; };
 		3EC5DA39191B325900653A38 /* fruits.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 3EC5DA38191B325900653A38 /* fruits.jpg */; };
@@ -53,9 +51,6 @@
 		3EC5DA15191B302000653A38 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
 		3EC5DA1B191B302000653A38 /* CVCustomActionSheetTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = CVCustomActionSheetTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		3EC5DA1C191B302000653A38 /* XCTest.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = XCTest.framework; path = Library/Frameworks/XCTest.framework; sourceTree = DEVELOPER_DIR; };
-		3EC5DA24191B302000653A38 /* CVCustomActionSheetTests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "CVCustomActionSheetTests-Info.plist"; sourceTree = "<group>"; };
-		3EC5DA26191B302000653A38 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
-		3EC5DA28191B302000653A38 /* CVCustomActionSheetTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CVCustomActionSheetTests.m; sourceTree = "<group>"; };
 		3EC5DA32191B303100653A38 /* CVCustomActionSheet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CVCustomActionSheet.h; sourceTree = "<group>"; };
 		3EC5DA33191B303100653A38 /* CVCustomActionSheet.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CVCustomActionSheet.m; sourceTree = "<group>"; };
 		3EC5DA35191B313A00653A38 /* UIImage+ImageEffects.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIImage+ImageEffects.h"; sourceTree = "<group>"; };
@@ -91,7 +86,6 @@
 			isa = PBXGroup;
 			children = (
 				3EC5DA03191B302000653A38 /* CVCustomActionSheet */,
-				3EC5DA22191B302000653A38 /* CVCustomActionSheetTests */,
 				3EC5D9FC191B302000653A38 /* Frameworks */,
 				3EC5D9FB191B302000653A38 /* Products */,
 			);
@@ -143,24 +137,6 @@
 				3EC5DA06191B302000653A38 /* InfoPlist.strings */,
 				3EC5DA09191B302000653A38 /* main.m */,
 				3EC5DA0B191B302000653A38 /* CVCustomActionSheet-Prefix.pch */,
-			);
-			name = "Supporting Files";
-			sourceTree = "<group>";
-		};
-		3EC5DA22191B302000653A38 /* CVCustomActionSheetTests */ = {
-			isa = PBXGroup;
-			children = (
-				3EC5DA28191B302000653A38 /* CVCustomActionSheetTests.m */,
-				3EC5DA23191B302000653A38 /* Supporting Files */,
-			);
-			path = CVCustomActionSheetTests;
-			sourceTree = "<group>";
-		};
-		3EC5DA23191B302000653A38 /* Supporting Files */ = {
-			isa = PBXGroup;
-			children = (
-				3EC5DA24191B302000653A38 /* CVCustomActionSheetTests-Info.plist */,
-				3EC5DA25191B302000653A38 /* InfoPlist.strings */,
 			);
 			name = "Supporting Files";
 			sourceTree = "<group>";
@@ -253,7 +229,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				3EC5DA27191B302000653A38 /* InfoPlist.strings in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -276,7 +251,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				3EC5DA29191B302000653A38 /* CVCustomActionSheetTests.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -305,14 +279,6 @@
 				3EC5DA10191B302000653A38 /* Base */,
 			);
 			name = Main.storyboard;
-			sourceTree = "<group>";
-		};
-		3EC5DA25191B302000653A38 /* InfoPlist.strings */ = {
-			isa = PBXVariantGroup;
-			children = (
-				3EC5DA26191B302000653A38 /* en */,
-			);
-			name = InfoPlist.strings;
 			sourceTree = "<group>";
 		};
 /* End PBXVariantGroup section */
@@ -475,6 +441,7 @@
 				3EC5DA2E191B302000653A38 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		3EC5DA2F191B302000653A38 /* Build configuration list for PBXNativeTarget "CVCustomActionSheetTests" */ = {
 			isa = XCConfigurationList;
@@ -483,6 +450,7 @@
 				3EC5DA31191B302000653A38 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
