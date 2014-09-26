@@ -1,5 +1,5 @@
 //
-//  cvAppDelegate.h
+//  ViewController.h
 //  CVCustomActionSheet
 //
 //  Created by Coulton Vento on 5/7/14.
@@ -7,9 +7,10 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "CVCustomActionSheet.h"
 
-@interface cvAppDelegate : UIResponder <UIApplicationDelegate>
+@interface ViewController : UIViewController
 
-@property (strong, nonatomic) UIWindow *window;
+- (IBAction)showActionSheet;
 
 @end

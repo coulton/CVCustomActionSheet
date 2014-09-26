@@ -1,14 +1,14 @@
 //
-//  cvAppDelegate.m
+//  AppDelegate.m
 //  CVCustomActionSheet
 //
 //  Created by Coulton Vento on 5/7/14.
 //  Copyright (c) 2014 Coulton Vento. All rights reserved.
 //
 
-#import "cvAppDelegate.h"
+#import "AppDelegate.h"
 
-@implementation cvAppDelegate
+@implementation AppDelegate
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     // Override point for customization after application launch.

@@ -8,12 +8,14 @@
 
 #import <Foundation/Foundation.h>
 
+typedef void (^CVOptionPressed)(NSInteger buttonIndex, NSString *buttonTitle);
+typedef void (^CVCancelPressed)();
+
 @interface CVCustomActionSheet : NSObject <UIScrollViewDelegate>
 
-- (id)initWithButtons:(NSArray *)buttons andCancelButtonTitle:(NSString*)cancelButtonTitle;
-- (void)show;
+- (id)initWithOptions:(NSArray *)options andCancelButtonTitle:(NSString*)cancelButtonTitle;
+- (void)show:(CVCancelPressed)cancelBlock optionPressed:(CVOptionPressed)optionBlock;
 
-// Properties
 @property (nonatomic, assign) NSInteger *tag;
 @property (nonatomic, strong) UIColor *buttonBackgroundColor, *selectedButtonBackgroundColor, *buttonTextColor, *selectedButtonTextColor, *cancelBackgroundColor, *selectedCancelBackgroundColor, *cancelTextColor, *selectedCancelTextColor, *lineColor;
 @property (nonatomic, strong) UIFont *buttonFont;

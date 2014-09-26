@@ -17,7 +17,7 @@ NSInteger const buttonCountMax = 4;
 
 @interface CVCustomActionSheet () {
     NSString *cancelTitle;
-    NSArray *buttonTitles;
+    NSArray *optionTitles;
 }
 
 @property (nonatomic, strong) UIWindow *window;
@@ -25,6 +25,8 @@ NSInteger const buttonCountMax = 4;
 @property (nonatomic, strong) UIView *contentView;
 @property (nonatomic, strong) UIVisualEffectView *backgroundView;
 
+@property (nonatomic, strong) CVOptionPressed optionCompletion;
+@property (nonatomic, strong) CVCancelPressed cancelCompletion;
 @property (nonatomic, strong) CVCustomActionSheet *actionSheet;
 @property (nonatomic, readonly) UIButton *cancelButton, *optionButton;
 @end
@@ -47,7 +49,7 @@ NSInteger const buttonCountMax = 4;
     self.lineColor = [UIColor colorWithWhite:0.9 alpha:1.0];
 }
 
-- (id)initWithButtons:(NSArray *)buttons
+- (id)initWithOptions:(NSArray *)options
  andCancelButtonTitle:(NSString*)cancelButtonTitle
 {
     self = [super init];
@@ -57,7 +59,7 @@ NSInteger const buttonCountMax = 4;
         
         self.window = [UIApplication sharedApplication].keyWindow;
         self.actionSheet = self;
-        buttonTitles = buttons;
+        optionTitles = options;
         
         UIVisualEffect *effect = [UIBlurEffect effectWithStyle:UIBlurEffectStyleDark];
         self.backgroundView = [[UIVisualEffectView alloc] initWithEffect:effect];
@@ -69,25 +71,25 @@ NSInteger const buttonCountMax = 4;
         
         self.contentView = [[UIView alloc] initWithFrame:kScreenSize];
         
-        if ([buttons count] > buttonCountMax) {
+        if ([options count] > buttonCountMax) {
             CGRect frame = CGRectMake(buttonMargin, 0, kButtonWidth, buttonHeight * buttonCountMax);
             self.scrollView = [[UIScrollView alloc] initWithFrame:frame];
             self.scrollView.backgroundColor = self.buttonBackgroundColor;
             self.scrollView.delegate = self.actionSheet;
             self.scrollView.showsVerticalScrollIndicator = NO;
             
-            self.scrollView.contentSize = CGSizeMake(kButtonWidth, ((buttonHeight + 1) * [buttons count]) - 1);
+            self.scrollView.contentSize = CGSizeMake(kButtonWidth, ((buttonHeight + 1) * [options count]) - 1);
             [self.contentView addSubview:self.scrollView];
         }
         
         int i = 0;
-        for (NSString *buttonTitle in buttons) {
+        for (NSString *buttonTitle in options) {
             
             // Single option
             UIButton *optionButton = [self optionButton];
             [optionButton setTitle:buttonTitle forState:UIControlStateNormal];
             
-            if ([buttons count] > buttonCountMax) {
+            if ([options count] > buttonCountMax) {
                 
                 optionButton.frame = CGRectMake(0, i * (buttonHeight + 1), kButtonWidth, buttonHeight);
                 [self.scrollView addSubview:optionButton];
@@ -98,11 +100,11 @@ NSInteger const buttonCountMax = 4;
             }
             
             // Line
-            if (i < [buttons count] - 1) {
+            if (i < [options count] - 1) {
                 CALayer *line = [CALayer layer];
                 line.backgroundColor = self.lineColor.CGColor;
                 
-                if ([buttons count] > buttonCountMax) {
+                if ([options count] > buttonCountMax) {
                     
                     line.frame = CGRectMake(0, optionButton.frame.origin.y + buttonHeight, kButtonWidth, 1);
                     [self.scrollView.layer addSublayer:line];
@@ -116,7 +118,7 @@ NSInteger const buttonCountMax = 4;
             i++;
         }
         
-        if ([buttons count] > buttonCountMax) {
+        if ([options count] > buttonCountMax) {
             
             CALayer *lineTop = [CALayer layer];
             lineTop.backgroundColor = self.lineColor.CGColor;
@@ -131,10 +133,10 @@ NSInteger const buttonCountMax = 4;
         
         // Cancel
         UIButton *cancel = [self cancelButton];
-        if ([buttons count] > buttonCountMax) {
-            cancel.frame = CGRectMake(buttonMargin, buttonCountMax * (buttonHeight + 1), kButtonWidth, buttonHeight);
+        if ([options count] > buttonCountMax) {
+            cancel.frame = CGRectMake(buttonMargin, buttonCountMax * (buttonHeight + 1) + (buttonMargin/2), kButtonWidth, buttonHeight);
         } else {
-            cancel.frame = CGRectMake(buttonMargin, (i * (buttonHeight + 1)) + 7.5f, kButtonWidth, buttonHeight);
+            cancel.frame = CGRectMake(buttonMargin, (i * (buttonHeight + 1)) + (buttonMargin/2), kButtonWidth, buttonHeight);
         }
         [cancel setTitle:cancelButtonTitle forState:UIControlStateNormal];
         [self.contentView addSubview:cancel];
@@ -207,8 +209,12 @@ NSInteger const buttonCountMax = 4;
 #pragma mark - Buttons
 #pragma mark Actions
 
-- (void)show
+- (void)show:(CVCancelPressed)cancelBlock
+optionPressed:(CVOptionPressed)optionBlock
 {
+    self.cancelCompletion = cancelBlock;
+    self.optionCompletion = optionBlock;
+    
     [UIView animateWithDuration:0.2
                           delay:0.0
                         options:UIViewAnimationOptionCurveEaseInOut
@@ -260,12 +266,16 @@ NSInteger const buttonCountMax = 4;
 
 - (void)close:(id)sender
 {
+    UIButton *button = (UIButton*)sender;
+    NSString *buttonTitle = button.titleLabel.text;
+    
+    if (![optionTitles containsObject:buttonTitle]) return;
+    NSInteger buttonIndex = [optionTitles indexOfObject:buttonTitle];
+    
     [self dismiss:^{
         
-//        [self.delegate actionSheetButtonClicked:self.actionSheet
-//                                withButtonIndex:[NSNumber numberWithInt:index]
-//                                withButtonTitle:[buttonTitles objectAtIndex:index]];
-        
+        if (self.optionCompletion)
+            self.optionCompletion(buttonIndex, button.titleLabel.text);
     }];
 }
 
@@ -273,8 +283,7 @@ NSInteger const buttonCountMax = 4;
 {
     [self dismiss:^{
         
-//        [self.delegate actionSheetCancelled:self.actionSheet];
-        
+        if (self.cancelCompletion) self.cancelCompletion();
     }];
 }
 
