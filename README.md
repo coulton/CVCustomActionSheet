@@ -14,11 +14,7 @@ Usage
 
 ```
 CVCustomActionSheet *actionSheet = [[CVCustomActionSheet alloc] initWithOptions:@[@"Apples", @"Oranges", @"Bananas"] andCancelButtonTitle:@"Cancel"];
-[actionSheet show:^{
-	// Canceled
-} optionPressed:^(NSInteger buttonIndex, NSString *buttonTitle) {
-	// Button pressed
-}];
+[actionSheet show:^{} cancelPressed:^{} optionPressed:^(NSInteger buttonIndex, NSString *buttonTitle) { }];
 ```
 
 Customization
