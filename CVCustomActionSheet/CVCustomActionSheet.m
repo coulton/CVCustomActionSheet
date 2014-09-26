@@ -8,12 +8,25 @@
 
 #import "CVCustomActionSheet.h"
 
-@interface CVCustomActionSheet ()
-@property (nonatomic, retain) UIView *content;
-@property (nonatomic, retain) UIWindow *window;
-@property (nonatomic, retain) UIScrollView *scrollView;
-@property (nonatomic, retain) NSArray *otherButtonTitles;
-@property (nonatomic, retain) UIVisualEffectView *background;
+CGFloat const buttonHeight = 44.0f;
+CGFloat const buttonMargin = 15.0f;
+NSInteger const buttonCountMax = 4;
+
+#define kScreenSize [[UIScreen mainScreen] bounds]
+#define kButtonWidth kScreenSize.size.width - (buttonMargin * 2)
+
+@interface CVCustomActionSheet () {
+    NSString *cancelTitle;
+    NSArray *buttonTitles;
+    
+    UIView *contentView;
+    UIScrollView *scrollView;
+    UIVisualEffectView *backgroundView;
+}
+
+@property (nonatomic, strong) UIWindow *window;
+@property (nonatomic, strong) CVCustomActionSheet *actionSheet;
+@property (nonatomic, readonly) UIButton *cancelButton, *optionButton;
 @end
 
 @implementation CVCustomActionSheet
@@ -22,7 +35,7 @@
 {
     self.buttonBackgroundColor = [UIColor whiteColor];
     self.buttonTextColor = [UIColor blackColor];
-    self.selectedButtonBackgroundColor = [UIColor lightGrayColor];
+    self.selectedButtonBackgroundColor = [UIColor colorWithWhite:0.9 alpha:1.0];
     self.selectedButtonTextColor = [UIColor blackColor];
     
     self.cancelBackgroundColor = [UIColor blueColor];
@@ -34,120 +47,162 @@
     self.lineColor = [UIColor colorWithWhite:0.9 alpha:1.0];
 }
 
-- (id)initWithDelegate:(id<CVCustomActionSheetDelegate>)delegate
-     cancelButtonTitle:(NSString *)cancelButtonTitle
-     otherButtonTitles:(NSArray *)otherButtonTitles
+- (id)initWithButtons:(NSArray *)buttons
+ andCancelButtonTitle:(NSString*)cancelButtonTitle
 {
     self = [super init];
     if (self) {
+        cancelTitle = cancelButtonTitle;
         [self setDefaults];
         
-        self.delegate = delegate;
         self.window = [UIApplication sharedApplication].keyWindow;
-        self.otherButtonTitles = otherButtonTitles;
         self.actionSheet = self;
+        buttonTitles = buttons;
         
         UIVisualEffect *effect = [UIBlurEffect effectWithStyle:UIBlurEffectStyleDark];
-        self.background = [[UIVisualEffectView alloc] initWithEffect:effect];
-        self.background.frame = [[UIScreen mainScreen] bounds];
-        [self.window addSubview:self.background];
+        backgroundView = [[UIVisualEffectView alloc] initWithEffect:effect];
+        backgroundView.frame = kScreenSize;
+        [self.window addSubview:backgroundView];
         
-        self.content = [[UIView alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
-        int i = 0;
+        contentView = [[UIView alloc] initWithFrame:kScreenSize];
         
-        self.scrollView = [[UIScrollView alloc] initWithFrame:CGRectMake(15, 0, 290, CV_BUTTON_HEIGHT * CV_BUTTON_COUNT_MAX)];
-        self.scrollView.backgroundColor = self.buttonBackgroundColor;
-        self.scrollView.delegate = self.actionSheet;
-        self.scrollView.showsVerticalScrollIndicator = NO;
-        if ([otherButtonTitles count] > CV_BUTTON_COUNT_MAX) {
+        if ([buttons count] > buttonCountMax) {
+            CGRect frame = CGRectMake(buttonMargin, 0, kButtonWidth, buttonHeight * buttonCountMax);
+            scrollView = [[UIScrollView alloc] initWithFrame:frame];
+            scrollView.backgroundColor = self.buttonBackgroundColor;
+            scrollView.delegate = self.actionSheet;
+            scrollView.showsVerticalScrollIndicator = NO;
             
-            self.scrollView.contentSize = CGSizeMake(290, ((CV_BUTTON_HEIGHT + 1) * [otherButtonTitles count]) - 1);
-            [self.content addSubview:self.scrollView];
+            scrollView.contentSize = CGSizeMake(kButtonWidth, ((buttonHeight + 1) * [buttons count]) - 1);
+            [contentView addSubview:scrollView];
         }
         
-        for (NSString *string in otherButtonTitles) {
+        int i = 0;
+        for (NSString *buttonTitle in buttons) {
             
-            UIButton *option = [UIButton buttonWithType:UIButtonTypeCustom];
-            option.frame = CGRectMake(15, i * (CV_BUTTON_HEIGHT + 1), 290, CV_BUTTON_HEIGHT);
-            [option setTitle:string forState:UIControlStateNormal];
-            [option setTitleColor:self.buttonTextColor forState:UIControlStateNormal];
-            option.titleLabel.font = self.buttonFont;
-            option.backgroundColor = self.buttonBackgroundColor;
-            option.tag = i + 2;
-            [option addTarget:self.actionSheet action:@selector(buttonPress:) forControlEvents:UIControlEventTouchDown];
-            [option addTarget:self.actionSheet action:@selector(buttonRelease:) forControlEvents:UIControlEventTouchUpInside];
-            [option addTarget:self.actionSheet action:@selector(buttonRelease:) forControlEvents:UIControlEventTouchUpOutside];
-            [option addTarget:self.actionSheet action:@selector(close:) forControlEvents:UIControlEventTouchUpInside];
+            // Single option
+            UIButton *optionButton = [self optionButton];
+            [optionButton setTitle:buttonTitle forState:UIControlStateNormal];
             
-            if ([otherButtonTitles count] > CV_BUTTON_COUNT_MAX) {
+            if ([buttons count] > buttonCountMax) {
                 
-                // Add to scroll view, if there are enough buttons to scroll
-                option.frame = CGRectMake(0, i * (CV_BUTTON_HEIGHT + 1), 290, CV_BUTTON_HEIGHT);
-                [self.scrollView addSubview:option];
-                
+                optionButton.frame = CGRectMake(0, i * (buttonHeight + 1), kButtonWidth, buttonHeight);
+                [scrollView addSubview:optionButton];
             } else {
                 
-                // Add to the main content view, if there aren't enough buttons to scroll
-                [self.content addSubview:option];
-                
+                optionButton.frame = CGRectMake(buttonMargin, i * (buttonHeight + 1), kButtonWidth, buttonHeight);
+                [contentView addSubview:optionButton];
             }
             
-            // Add a line, if it's not the last entry
-            if (i + 1 < [otherButtonTitles count]) {
-                UIView *line = [[UIView alloc] initWithFrame:CGRectMake(15, option.frame.origin.y + CV_BUTTON_HEIGHT, 290, 1)];
-                line.backgroundColor = self.lineColor;
+            // Line
+            if (i < [buttons count] - 1) {
+                CALayer *line = [CALayer layer];
+                line.backgroundColor = self.lineColor.CGColor;
                 
-                if ([otherButtonTitles count] > CV_BUTTON_COUNT_MAX) {
-                    line.frame = CGRectMake(0, option.frame.origin.y + CV_BUTTON_HEIGHT, 290, 1);
-                    [self.scrollView addSubview:line];
+                if ([buttons count] > buttonCountMax) {
+                    
+                    line.frame = CGRectMake(0, optionButton.frame.origin.y + buttonHeight, kButtonWidth, 1);
+                    [scrollView.layer addSublayer:line];
                 } else {
-                    [self.content addSubview:line];
+                    
+                    line.frame = CGRectMake(buttonMargin, optionButton.frame.origin.y + buttonHeight, kButtonWidth, 1);
+                    [contentView.layer addSublayer:line];
                 }
             }
             
             i++;
-            
         }
         
-        // Bottom & top lines (if in a scrollView)
-        if ([otherButtonTitles count] > CV_BUTTON_COUNT_MAX) {
-            UIView *lineTop = [[UIView alloc] initWithFrame:CGRectMake(0, -1, 290, 1)];
-            lineTop.backgroundColor = self.lineColor;
-            [self.scrollView addSubview:lineTop];
+        if ([buttons count] > buttonCountMax) {
             
-            UIView *lineBottom = [[UIView alloc] initWithFrame:CGRectMake(0, self.scrollView.contentSize.height, 290, 1)];
-            lineBottom.backgroundColor = self.lineColor;
-            [self.scrollView addSubview:lineBottom];
+            CALayer *lineTop = [CALayer layer];
+            lineTop.backgroundColor = self.lineColor.CGColor;
+            lineTop.frame = CGRectMake(0, -1, kButtonWidth, 1);
+            [scrollView.layer addSublayer:lineTop];
+            
+            CALayer *lineBottom = [CALayer layer];
+            lineBottom.backgroundColor = self.lineColor.CGColor;
+            lineBottom.frame = CGRectMake(0, scrollView.contentSize.height, kButtonWidth, 1);
+            [scrollView.layer addSublayer:lineBottom];
         }
         
-        // Cancel Button
-        UIButton *cancel = [UIButton buttonWithType:UIButtonTypeCustom];
-        if ([otherButtonTitles count] > 4) {
-            cancel.frame = CGRectMake(15, (CV_BUTTON_COUNT_MAX * (CV_BUTTON_HEIGHT + 1)) + 7.5f, 290, CV_BUTTON_HEIGHT);
+        // Cancel
+        UIButton *cancel = [self cancelButton];
+        if ([buttons count] > buttonCountMax) {
+            cancel.frame = CGRectMake(buttonMargin, buttonCountMax * (buttonHeight + 1), kButtonWidth, buttonHeight);
         } else {
-            cancel.frame = CGRectMake(15, (i * (CV_BUTTON_HEIGHT + 1)) + 7.5f, 290, CV_BUTTON_HEIGHT);
+            cancel.frame = CGRectMake(buttonMargin, (i * (buttonHeight + 1)) + 7.5f, kButtonWidth, buttonHeight);
         }
         [cancel setTitle:cancelButtonTitle forState:UIControlStateNormal];
-        [cancel setTitleColor:self.cancelTextColor forState:UIControlStateNormal];
-        cancel.titleLabel.font = self.buttonFont;
-        cancel.backgroundColor = self.cancelBackgroundColor;
-        [cancel addTarget:self.actionSheet action:@selector(cancel:) forControlEvents:UIControlEventTouchUpInside];
-        [cancel addTarget:self.actionSheet action:@selector(buttonPress:) forControlEvents:UIControlEventTouchDown];
-        [cancel addTarget:self.actionSheet action:@selector(buttonRelease:) forControlEvents:UIControlEventTouchUpInside];
-        [cancel addTarget:self.actionSheet action:@selector(buttonRelease:) forControlEvents:UIControlEventTouchUpOutside];
-        cancel.tag = 1;
-        [self.content addSubview:cancel];
+        [contentView addSubview:cancel];
         
-        // Set Frame
-        CGRect frame = self.content.frame;
+        // Content frame
+        CGRect frame = contentView.frame;
         frame.size.height = cancel.frame.origin.y + cancel.frame.size.height;
-        frame.origin.y = [[UIScreen mainScreen] bounds].size.height;
-        self.content.frame = frame;
-        [self.window addSubview:self.content];
+        frame.origin.y = kScreenSize.size.height;
+        contentView.frame = frame;
+        [self.window addSubview:contentView];
     
     }
     return self;
 }
+
+#pragma mark Properties
+
+- (UIButton *)cancelButton
+{
+    UIButton *cancel = [UIButton buttonWithType:UIButtonTypeCustom];
+    [cancel setTitleColor:self.cancelTextColor forState:UIControlStateNormal];
+    cancel.titleLabel.font = self.buttonFont;
+    cancel.backgroundColor = self.cancelBackgroundColor;
+    
+    [cancel addTarget:self.actionSheet
+               action:@selector(cancel:)
+     forControlEvents:UIControlEventTouchUpInside];
+    
+    [cancel addTarget:self.actionSheet
+               action:@selector(buttonPress:)
+     forControlEvents:UIControlEventTouchDown];
+    
+    [cancel addTarget:self.actionSheet
+               action:@selector(buttonRelease:)
+     forControlEvents:UIControlEventTouchUpInside];
+    
+    [cancel addTarget:self.actionSheet
+               action:@selector(buttonRelease:)
+     forControlEvents:UIControlEventTouchUpOutside];
+    
+    return cancel;
+}
+
+- (UIButton *)optionButton
+{
+    UIButton *option = [UIButton buttonWithType:UIButtonTypeCustom];
+    [option setTitleColor:self.buttonTextColor forState:UIControlStateNormal];
+    option.titleLabel.font = self.buttonFont;
+    option.backgroundColor = self.buttonBackgroundColor;
+    
+    [option addTarget:self.actionSheet
+               action:@selector(buttonPress:)
+     forControlEvents:UIControlEventTouchDown];
+    
+    [option addTarget:self.actionSheet
+               action:@selector(buttonRelease:)
+     forControlEvents:UIControlEventTouchUpInside];
+    
+    [option addTarget:self.actionSheet
+               action:@selector(buttonRelease:)
+     forControlEvents:UIControlEventTouchUpOutside];
+    
+    [option addTarget:self.actionSheet
+               action:@selector(close:)
+     forControlEvents:UIControlEventTouchUpInside];
+    
+    return option;
+}
+
+#pragma mark - Buttons
+#pragma mark Actions
 
 - (void)show
 {
@@ -155,11 +210,11 @@
                           delay:0.0
                         options:UIViewAnimationOptionCurveEaseInOut
                      animations:^(void){
-        
-        self.content.alpha = 1.0;
-        self.background.alpha = 1.0f;
-        
-    } completion:nil];
+                         
+                         contentView.alpha = 1.0;
+                         backgroundView.alpha = 1.0f;
+                         
+                     } completion:nil];
     
     [UIView animateWithDuration:0.3
                           delay:0.0
@@ -167,37 +222,33 @@
           initialSpringVelocity:0.0
                         options:UIViewAnimationOptionCurveEaseIn animations:^(void) {
                             
-                            CGRect frame = self.content.frame;
-                            frame.origin.y = [[UIScreen mainScreen] bounds].size.height - self.content.frame.size.height - 15;
-                            self.content.frame = frame;
+                            CGRect frame = contentView.frame;
+                            frame.origin.y = kScreenSize.size.height - contentView.frame.size.height - buttonMargin;
+                            contentView.frame = frame;
                             
                         }
                      completion:nil];
 }
 
-#pragma mark - Buttons
-#pragma mark Actions
-
 - (void)close:(id)sender
 {
-    int index = (int)((UIControl*)sender).tag - 2;
-    
     [UIView animateWithDuration:0.15 delay:0.0 options:UIViewAnimationOptionCurveEaseInOut animations:^(void){
         
-        self.background.alpha = 0.0;
+        backgroundView.alpha = 0.0;
         
-        CGRect frame = self.content.frame;
-        frame.origin.y = [[UIScreen mainScreen] bounds].size.height;
-        self.content.frame = frame;
+        CGRect frame = contentView.frame;
+        frame.origin.y = kScreenSize.size.height;
+        contentView.frame = frame;
         
     } completion:^(BOOL finish){
         
-        [self.background removeFromSuperview];
-        self.background = nil;
+        [backgroundView removeFromSuperview];
+        backgroundView = nil;
+        self.actionSheet = nil;
         
-        [self.delegate actionSheetButtonClicked:self.actionSheet
-                                withButtonIndex:[NSNumber numberWithInt:index]
-                                withButtonTitle:[self.otherButtonTitles objectAtIndex:index]];
+//        [self.delegate actionSheetButtonClicked:self.actionSheet
+//                                withButtonIndex:[NSNumber numberWithInt:index]
+//                                withButtonTitle:[buttonTitles objectAtIndex:index]];
         
     }];
 }
@@ -206,27 +257,28 @@
 {
     [UIView animateWithDuration:0.15 delay:0.0 options:UIViewAnimationOptionCurveEaseInOut animations:^(void){
     
-        self.background.alpha = 0.0;
+        backgroundView.alpha = 0.0;
         
-        CGRect frame = self.content.frame;
-        frame.origin.y = [[UIScreen mainScreen] bounds].size.height;
-        self.content.frame = frame;
+        CGRect frame = contentView.frame;
+        frame.origin.y = kScreenSize.size.height;
+        contentView.frame = frame;
     
     } completion:^(BOOL finish){
         
-        [self.background removeFromSuperview];
-        self.background = nil;
+        [backgroundView removeFromSuperview];
+        backgroundView = nil;
+        self.actionSheet = nil;
         
-        [self.delegate actionSheetCancelled:self.actionSheet];
+        //[self.delegate actionSheetCancelled:self.actionSheet];
         
     }];
 }
 
 #pragma mark Highlighting
 
-- (void)scrollViewWillBeginDragging:(UIScrollView *)scrollView
+- (void)scrollViewWillBeginDragging:(UIScrollView *)draggedScrollView
 {
-    for (UIView *subview in self.scrollView.subviews) {
+    for (UIView *subview in scrollView.subviews) {
         
         if (subview.tag == 0) continue;
         [self buttonRelease:subview];
@@ -235,10 +287,9 @@
 
 - (void)buttonPress:(id)sender
 {
-    int tag = (int)((UIControl*)sender).tag;
-    UIButton *button = (UIButton*)[self.content viewWithTag:tag];
+    UIButton *button = (UIButton*)sender;
     
-    if (tag == 1) {
+    if ([button.titleLabel.text isEqualToString:cancelTitle]) {
         [button setTitleColor:self.selectedCancelTextColor forState:UIControlStateNormal];
         [button setBackgroundColor:self.selectedCancelBackgroundColor];
     } else {
@@ -249,10 +300,9 @@
 
 - (void)buttonRelease:(id)sender
 {
-    int tag = (int)((UIControl*)sender).tag;
-    UIButton *button = (UIButton*)[self.content viewWithTag:tag];
+    UIButton *button = (UIButton*)sender;
     
-    if (tag == 1) {
+    if ([button.titleLabel.text isEqualToString:cancelTitle]) {
         [button setTitleColor:self.cancelTextColor forState:UIControlStateNormal];
         [button setBackgroundColor:self.cancelBackgroundColor];
     } else {

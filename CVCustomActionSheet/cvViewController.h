@@ -9,7 +9,7 @@
 #import <UIKit/UIKit.h>
 #import "CVCustomActionSheet.h"
 
-@interface cvViewController : UIViewController <CVCustomActionSheetDelegate>
+@interface cvViewController : UIViewController
 
 - (IBAction)showActionSheet;
 
