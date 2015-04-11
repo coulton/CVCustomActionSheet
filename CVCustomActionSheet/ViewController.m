@@ -42,10 +42,15 @@
     };
     
     // Style (opt)
-    CVCustomActionSheetButtonConfiguration *config = [CVCustomActionSheetButtonConfiguration configurationWithTextColor:[UIColor whiteColor]
+    CVCustomActionSheetButtonConfiguration *normal = [CVCustomActionSheetButtonConfiguration configurationWithTextColor:[UIColor whiteColor]
                                                                                                         backgroundColor:[UIColor blueColor]
-                                                                                                                   font:[UIFont systemFontOfSize:12]];
-    [self.actionSheet setButtonConfiguration:config forType:CVCustomActionTypeCancel selected:NO];
+                                                                                                                   font:[UIFont systemFontOfSize:15]];
+    
+    CVCustomActionSheetButtonConfiguration *selected = [CVCustomActionSheetButtonConfiguration configurationWithTextColor:[UIColor blueColor]
+                                                                                                          backgroundColor:[UIColor whiteColor]
+                                                                                                                     font:[UIFont systemFontOfSize:15]];
+    [self.actionSheet setButtonConfiguration:normal forType:CVCustomActionTypeCancel selected:NO];
+    [self.actionSheet setButtonConfiguration:selected forType:CVCustomActionTypeCancel selected:YES];
     
     // Add actions
     NSArray *fruits = @[@"Apples", @"Oranges", @"Bananas", @"Peaches", @"Grapes", @"Blueberries"];
