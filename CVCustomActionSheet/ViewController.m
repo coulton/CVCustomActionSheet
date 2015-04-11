@@ -32,7 +32,14 @@
 
 - (IBAction)showActionSheet
 {
+    // Setup
     self.actionSheet = [[CVCustomActionSheet alloc] init];
+    
+    __weak ViewController *weakSelf = self;
+    self.actionSheet.dismissBlock = ^{
+        weakSelf.actionSheet = nil;
+        NSLog(@"dismissed.");
+    };
     
     // Style (opt)
     CVCustomActionSheetButtonConfiguration *config = [CVCustomActionSheetButtonConfiguration configurationWithTextColor:[UIColor whiteColor]

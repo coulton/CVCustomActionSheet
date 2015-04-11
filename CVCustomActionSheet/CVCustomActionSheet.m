@@ -161,6 +161,10 @@ static CGFloat const AnimationInitialSpringVelocity = 1.0;
                          [self.cancelButton removeFromSuperview];
                          [self.scrollView removeFromSuperview];
                          [self.backgroundView removeFromSuperview];
+                         
+                         if (self.dismissBlock) {
+                             self.dismissBlock();
+                         }
                      }];
     
 }

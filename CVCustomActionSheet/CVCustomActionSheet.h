@@ -28,6 +28,11 @@
                       selected:(BOOL)selected;
 
 /**
+ *  This will get called when the action sheet is finished dismissing.
+ */
+@property (nonatomic, copy) void (^dismissBlock)();
+
+/**
  *  Add an action to the action sheet. A cancel button and at least 1 default button is required.
  *
  *  @param action The action to add.
