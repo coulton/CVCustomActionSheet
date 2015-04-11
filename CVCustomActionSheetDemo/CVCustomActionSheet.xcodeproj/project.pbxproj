@@ -7,9 +7,10 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		3E8C6B141AD1B72100D39697 /* CVCustomAction.m in Sources */ = {isa = PBXBuildFile; fileRef = 3E8C6B131AD1B72100D39697 /* CVCustomAction.m */; };
-		3E8C6B171AD1BB1D00D39697 /* CVCustomActionSheetButtonConfiguration.m in Sources */ = {isa = PBXBuildFile; fileRef = 3E8C6B161AD1BB1D00D39697 /* CVCustomActionSheetButtonConfiguration.m */; };
-		3E8C6B1D1AD1FAE900D39697 /* CVCustomActionSheetButton.m in Sources */ = {isa = PBXBuildFile; fileRef = 3E8C6B1C1AD1FAE900D39697 /* CVCustomActionSheetButton.m */; };
+		3E8C6B261AD9B22E00D39697 /* CVCustomAction.m in Sources */ = {isa = PBXBuildFile; fileRef = 3E8C6B1F1AD9B22E00D39697 /* CVCustomAction.m */; };
+		3E8C6B271AD9B22E00D39697 /* CVCustomActionSheet.m in Sources */ = {isa = PBXBuildFile; fileRef = 3E8C6B211AD9B22E00D39697 /* CVCustomActionSheet.m */; };
+		3E8C6B281AD9B22E00D39697 /* CVCustomActionSheetButton.m in Sources */ = {isa = PBXBuildFile; fileRef = 3E8C6B231AD9B22E00D39697 /* CVCustomActionSheetButton.m */; };
+		3E8C6B291AD9B22E00D39697 /* CVCustomActionSheetButtonConfiguration.m in Sources */ = {isa = PBXBuildFile; fileRef = 3E8C6B251AD9B22E00D39697 /* CVCustomActionSheetButtonConfiguration.m */; };
 		3EC5D9FE191B302000653A38 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3EC5D9FD191B302000653A38 /* Foundation.framework */; };
 		3EC5DA00191B302000653A38 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3EC5D9FF191B302000653A38 /* CoreGraphics.framework */; };
 		3EC5DA02191B302000653A38 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3EC5DA01191B302000653A38 /* UIKit.framework */; };
@@ -22,7 +23,6 @@
 		3EC5DA1D191B302000653A38 /* XCTest.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3EC5DA1C191B302000653A38 /* XCTest.framework */; };
 		3EC5DA1E191B302000653A38 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3EC5D9FD191B302000653A38 /* Foundation.framework */; };
 		3EC5DA1F191B302000653A38 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3EC5DA01191B302000653A38 /* UIKit.framework */; };
-		3EC5DA34191B303100653A38 /* CVCustomActionSheet.m in Sources */ = {isa = PBXBuildFile; fileRef = 3EC5DA33191B303100653A38 /* CVCustomActionSheet.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -36,12 +36,14 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		3E8C6B121AD1B72100D39697 /* CVCustomAction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CVCustomAction.h; sourceTree = "<group>"; };
-		3E8C6B131AD1B72100D39697 /* CVCustomAction.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CVCustomAction.m; sourceTree = "<group>"; };
-		3E8C6B151AD1BB1D00D39697 /* CVCustomActionSheetButtonConfiguration.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CVCustomActionSheetButtonConfiguration.h; sourceTree = "<group>"; };
-		3E8C6B161AD1BB1D00D39697 /* CVCustomActionSheetButtonConfiguration.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CVCustomActionSheetButtonConfiguration.m; sourceTree = "<group>"; };
-		3E8C6B1B1AD1FAE900D39697 /* CVCustomActionSheetButton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CVCustomActionSheetButton.h; sourceTree = "<group>"; };
-		3E8C6B1C1AD1FAE900D39697 /* CVCustomActionSheetButton.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CVCustomActionSheetButton.m; sourceTree = "<group>"; };
+		3E8C6B1E1AD9B22E00D39697 /* CVCustomAction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CVCustomAction.h; path = ../../CVCustomActionSheet/CVCustomAction.h; sourceTree = "<group>"; };
+		3E8C6B1F1AD9B22E00D39697 /* CVCustomAction.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = CVCustomAction.m; path = ../../CVCustomActionSheet/CVCustomAction.m; sourceTree = "<group>"; };
+		3E8C6B201AD9B22E00D39697 /* CVCustomActionSheet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CVCustomActionSheet.h; path = ../../CVCustomActionSheet/CVCustomActionSheet.h; sourceTree = "<group>"; };
+		3E8C6B211AD9B22E00D39697 /* CVCustomActionSheet.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = CVCustomActionSheet.m; path = ../../CVCustomActionSheet/CVCustomActionSheet.m; sourceTree = "<group>"; };
+		3E8C6B221AD9B22E00D39697 /* CVCustomActionSheetButton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CVCustomActionSheetButton.h; path = ../../CVCustomActionSheet/CVCustomActionSheetButton.h; sourceTree = "<group>"; };
+		3E8C6B231AD9B22E00D39697 /* CVCustomActionSheetButton.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = CVCustomActionSheetButton.m; path = ../../CVCustomActionSheet/CVCustomActionSheetButton.m; sourceTree = "<group>"; };
+		3E8C6B241AD9B22E00D39697 /* CVCustomActionSheetButtonConfiguration.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CVCustomActionSheetButtonConfiguration.h; path = ../../CVCustomActionSheet/CVCustomActionSheetButtonConfiguration.h; sourceTree = "<group>"; };
+		3E8C6B251AD9B22E00D39697 /* CVCustomActionSheetButtonConfiguration.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = CVCustomActionSheetButtonConfiguration.m; path = ../../CVCustomActionSheet/CVCustomActionSheetButtonConfiguration.m; sourceTree = "<group>"; };
 		3EC5D9FA191B302000653A38 /* CVCustomActionSheet.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = CVCustomActionSheet.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		3EC5D9FD191B302000653A38 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		3EC5D9FF191B302000653A38 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
@@ -58,8 +60,6 @@
 		3EC5DA15191B302000653A38 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
 		3EC5DA1B191B302000653A38 /* CVCustomActionSheetTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = CVCustomActionSheetTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		3EC5DA1C191B302000653A38 /* XCTest.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = XCTest.framework; path = Library/Frameworks/XCTest.framework; sourceTree = DEVELOPER_DIR; };
-		3EC5DA32191B303100653A38 /* CVCustomActionSheet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CVCustomActionSheet.h; sourceTree = "<group>"; };
-		3EC5DA33191B303100653A38 /* CVCustomActionSheet.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CVCustomActionSheet.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -118,14 +118,14 @@
 		3EC5DA03191B302000653A38 /* CVCustomActionSheet */ = {
 			isa = PBXGroup;
 			children = (
-				3EC5DA32191B303100653A38 /* CVCustomActionSheet.h */,
-				3EC5DA33191B303100653A38 /* CVCustomActionSheet.m */,
-				3E8C6B1B1AD1FAE900D39697 /* CVCustomActionSheetButton.h */,
-				3E8C6B1C1AD1FAE900D39697 /* CVCustomActionSheetButton.m */,
-				3E8C6B121AD1B72100D39697 /* CVCustomAction.h */,
-				3E8C6B131AD1B72100D39697 /* CVCustomAction.m */,
-				3E8C6B151AD1BB1D00D39697 /* CVCustomActionSheetButtonConfiguration.h */,
-				3E8C6B161AD1BB1D00D39697 /* CVCustomActionSheetButtonConfiguration.m */,
+				3E8C6B1E1AD9B22E00D39697 /* CVCustomAction.h */,
+				3E8C6B1F1AD9B22E00D39697 /* CVCustomAction.m */,
+				3E8C6B201AD9B22E00D39697 /* CVCustomActionSheet.h */,
+				3E8C6B211AD9B22E00D39697 /* CVCustomActionSheet.m */,
+				3E8C6B221AD9B22E00D39697 /* CVCustomActionSheetButton.h */,
+				3E8C6B231AD9B22E00D39697 /* CVCustomActionSheetButton.m */,
+				3E8C6B241AD9B22E00D39697 /* CVCustomActionSheetButtonConfiguration.h */,
+				3E8C6B251AD9B22E00D39697 /* CVCustomActionSheetButtonConfiguration.m */,
 				3EC5DA0C191B302000653A38 /* AppDelegate.h */,
 				3EC5DA0D191B302000653A38 /* AppDelegate.m */,
 				3EC5DA0F191B302000653A38 /* Main.storyboard */,
@@ -246,12 +246,12 @@
 			buildActionMask = 2147483647;
 			files = (
 				3EC5DA0A191B302000653A38 /* main.m in Sources */,
+				3E8C6B271AD9B22E00D39697 /* CVCustomActionSheet.m in Sources */,
+				3E8C6B261AD9B22E00D39697 /* CVCustomAction.m in Sources */,
+				3E8C6B291AD9B22E00D39697 /* CVCustomActionSheetButtonConfiguration.m in Sources */,
+				3E8C6B281AD9B22E00D39697 /* CVCustomActionSheetButton.m in Sources */,
 				3EC5DA14191B302000653A38 /* ViewController.m in Sources */,
-				3E8C6B171AD1BB1D00D39697 /* CVCustomActionSheetButtonConfiguration.m in Sources */,
 				3EC5DA0E191B302000653A38 /* AppDelegate.m in Sources */,
-				3E8C6B1D1AD1FAE900D39697 /* CVCustomActionSheetButton.m in Sources */,
-				3EC5DA34191B303100653A38 /* CVCustomActionSheet.m in Sources */,
-				3E8C6B141AD1B72100D39697 /* CVCustomAction.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

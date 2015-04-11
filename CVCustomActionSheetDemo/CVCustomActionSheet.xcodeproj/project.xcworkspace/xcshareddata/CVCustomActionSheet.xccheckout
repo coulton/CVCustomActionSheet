@@ -14,11 +14,11 @@
 		<string>https://github.com/coultonvento/CVCustomActionSheet.git</string>
 	</dict>
 	<key>IDESourceControlProjectPath</key>
-	<string>CVCustomActionSheet.xcodeproj</string>
+	<string>CVCustomActionSheetDemo/CVCustomActionSheet.xcodeproj</string>
 	<key>IDESourceControlProjectRelativeInstallPathDictionary</key>
 	<dict>
 		<key>F44CBDCD8916627B676255A5F643A9EB9D741BD0</key>
-		<string>../..</string>
+		<string>../../..</string>
 	</dict>
 	<key>IDESourceControlProjectURL</key>
 	<string>https://github.com/coultonvento/CVCustomActionSheet.git</string>
