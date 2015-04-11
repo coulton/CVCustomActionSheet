@@ -6,18 +6,42 @@
 //  Copyright (c) 2014 twobros. All rights reserved.
 //
 
-#import <Foundation/Foundation.h>
+@import Foundation;
+#import "CVCustomAction.h"
+@class CVCustomAction;
+@class CVCustomActionSheetButtonConfiguration;
 
-typedef void (^CVOptionPressed)(NSInteger buttonIndex, NSString *buttonTitle);
-typedef void (^CVCancelPressed)();
+/**
+ *  A customizable action sheet.
+ */
+@interface CVCustomActionSheet : NSObject
 
-@interface CVCustomActionSheet : NSObject <UIScrollViewDelegate>
+/**
+ *  Sets configuration for a button.
+ *
+ *  @param buttonConfiguration The button configuration. (Required)
+ *  @param type                The action type.
+ *  @param selected            Is this the selected state?
+ */
+- (void)setButtonConfiguration:(CVCustomActionSheetButtonConfiguration *)buttonConfiguration
+                       forType:(CVCustomActionType)type
+                      selected:(BOOL)selected;
 
-- (id)initWithOptions:(NSArray *)options andCancelButtonTitle:(NSString*)cancelButtonTitle;
-- (void)show:(void(^)())showBlock cancelPressed:(CVCancelPressed)cancelBlock optionPressed:(CVOptionPressed)optionBlock;
+/**
+ *  Add an action to the action sheet. A cancel button and at least 1 default button is required.
+ *
+ *  @param action The action to add.
+ */
+- (void)addAction:(CVCustomAction *)action;
 
-@property (nonatomic, assign) NSInteger *tag;
-@property (nonatomic, strong) UIColor *buttonBackgroundColor, *selectedButtonBackgroundColor, *buttonTextColor, *selectedButtonTextColor, *cancelBackgroundColor, *selectedCancelBackgroundColor, *cancelTextColor, *selectedCancelTextColor, *lineColor;
-@property (nonatomic, strong) UIFont *buttonFont;
+/**
+ *  Show the action sheet.
+ */
+- (void)show;
+
+/**
+ *  Manually dismiss the action sheet.
+ */
+- (void)dismiss;
 
 @end

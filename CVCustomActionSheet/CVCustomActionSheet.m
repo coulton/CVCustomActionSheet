@@ -7,327 +7,207 @@
 //
 
 #import "CVCustomActionSheet.h"
+#import "CVCustomAction.h"
+#import "CVCustomActionSheetButtonConfiguration.h"
+#import "CVCustomActionSheetButton.h"
 
-CGFloat const buttonHeight = 44.0f;
-CGFloat const buttonMargin = 15.0f;
-NSInteger const buttonCountMax = 4;
+static CGFloat const ButtonHeight = 44;
+static CGFloat const ButtonMargin = 8;
+static NSInteger const MaxVisibleButtons = 4;
 
-#define kScreenSize [[UIScreen mainScreen] bounds]
-#define kButtonWidth kScreenSize.size.width - (buttonMargin * 2)
+@interface CVCustomActionSheet () <UIScrollViewDelegate>
 
-@interface CVCustomActionSheet () {
-    NSString *cancelTitle;
-    NSArray *optionTitles;
-}
+@property (nonatomic) UIScrollView *scrollView;
+@property (nonatomic) UIVisualEffectView *backgroundView;
+@property (nonatomic) NSMutableArray *actions;
+@property (nonatomic) NSMutableDictionary *styles;
+@property (nonatomic) CVCustomActionSheetButton *cancelButton;
+@property (nonatomic, readonly) CGRect screenBounds;
+@property (nonatomic, readonly) UIWindow *window;
+@property (nonatomic, readonly) CVCustomAction *cancelAction;
 
-@property (nonatomic, strong) UIWindow *window;
-@property (nonatomic, strong) UIScrollView *scrollView;
-@property (nonatomic, strong) UIView *contentView;
-@property (nonatomic, strong) UIVisualEffectView *backgroundView;
-
-@property (nonatomic, strong) CVOptionPressed optionCompletion;
-@property (nonatomic, strong) CVCancelPressed cancelCompletion;
-@property (nonatomic, strong) CVCustomActionSheet *actionSheet;
-@property (nonatomic, readonly) UIButton *cancelButton, *optionButton;
 @end
 
 @implementation CVCustomActionSheet
 
-- (void)setDefaults
-{
-    self.buttonBackgroundColor = [UIColor whiteColor];
-    self.buttonTextColor = [UIColor blackColor];
-    self.selectedButtonBackgroundColor = [UIColor colorWithWhite:0.9 alpha:1.0];
-    self.selectedButtonTextColor = [UIColor blackColor];
-    
-    self.cancelBackgroundColor = [UIColor blueColor];
-    self.cancelTextColor = [UIColor whiteColor];
-    self.selectedCancelBackgroundColor = [UIColor blueColor];
-    self.selectedCancelTextColor = [UIColor whiteColor];
-    
-    self.buttonFont = [UIFont systemFontOfSize:15];
-    self.lineColor = [UIColor colorWithWhite:0.9 alpha:1.0];
-}
-
-- (id)initWithOptions:(NSArray *)options
- andCancelButtonTitle:(NSString*)cancelButtonTitle
+- (instancetype)init
 {
     self = [super init];
     if (self) {
-        self.window = [UIApplication sharedApplication].keyWindow;
-        self.actionSheet = self;
+        self.actions = [[NSMutableArray alloc] init];
         
-        cancelTitle = cancelButtonTitle;
-        optionTitles = options;
-        [self setDefaults];
+        UIVisualEffect *effect = [UIBlurEffect effectWithStyle:UIBlurEffectStyleDark];
+        _backgroundView = [[UIVisualEffectView alloc] initWithEffect:effect];
+        _backgroundView.alpha = 0;
+        _backgroundView.frame = [[UIScreen mainScreen] bounds];
+        [self.window addSubview:_backgroundView];
+        
+        _scrollView = [[UIScrollView alloc] initWithFrame:self.screenBounds];
+        _scrollView.showsVerticalScrollIndicator = YES;
+        _scrollView.showsHorizontalScrollIndicator = NO;
+        [self.window addSubview:_scrollView];
+        
+        UITapGestureRecognizer *tapGesture = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(dismiss)];
+        [self.backgroundView addGestureRecognizer:tapGesture];
     }
     return self;
 }
 
-- (void)setup
+- (void)addAction:(CVCustomAction *)action
 {
-    UIVisualEffect *effect = [UIBlurEffect effectWithStyle:UIBlurEffectStyleDark];
-    self.backgroundView = [[UIVisualEffectView alloc] initWithEffect:effect];
-    self.backgroundView.frame = kScreenSize;
-    [self.window addSubview:self.backgroundView];
+    NSParameterAssert(action);
+    [self.actions addObject:action];
+}
+
+- (void)show
+{
+    NSAssert([self occurrencesOfActionType:CVCustomActionTypeDefault] > 0, @"Before presenting, you must have at least 1 default action.");
+    NSAssert([self occurrencesOfActionType:CVCustomActionTypeCancel] == 1, @"Before presenting, you must have a cancel button.");
     
-    UITapGestureRecognizer *tapGesture = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(cancel:)];
-    [self.backgroundView addGestureRecognizer:tapGesture];
+    UIView *contentView = [self contentView];
     
-    self.contentView = [[UIView alloc] initWithFrame:kScreenSize];
-    
-    if ([optionTitles count] > buttonCountMax) {
-        CGRect frame = CGRectMake(buttonMargin, 0, kButtonWidth, buttonHeight * buttonCountMax);
-        self.scrollView = [[UIScrollView alloc] initWithFrame:frame];
-        self.scrollView.backgroundColor = self.buttonBackgroundColor;
-        self.scrollView.delegate = self.actionSheet;
-        self.scrollView.showsVerticalScrollIndicator = NO;
-        
-        self.scrollView.contentSize = CGSizeMake(kButtonWidth, ((buttonHeight + 1) * [optionTitles count]) - 1);
-        [self.contentView addSubview:self.scrollView];
-    }
-    
-    int i = 0;
-    for (NSString *buttonTitle in optionTitles) {
-        
-        // Single option
-        UIButton *optionButton = [self optionButton];
-        [optionButton setTitle:buttonTitle forState:UIControlStateNormal];
-        
-        if ([optionTitles count] > buttonCountMax) {
-            
-            optionButton.frame = CGRectMake(0, i * (buttonHeight + 1), kButtonWidth, buttonHeight);
-            [self.scrollView addSubview:optionButton];
-        } else {
-            
-            optionButton.frame = CGRectMake(buttonMargin, i * (buttonHeight + 1), kButtonWidth, buttonHeight);
-            [self.contentView addSubview:optionButton];
-        }
-        
-        // Line
-        if (i < [optionTitles count] - 1) {
-            CALayer *line = [CALayer layer];
-            line.backgroundColor = self.lineColor.CGColor;
-            
-            if ([optionTitles count] > buttonCountMax) {
-                
-                line.frame = CGRectMake(0, optionButton.frame.origin.y + buttonHeight, kButtonWidth, 1);
-                [self.scrollView.layer addSublayer:line];
-            } else {
-                
-                line.frame = CGRectMake(buttonMargin, optionButton.frame.origin.y + buttonHeight, kButtonWidth, 1);
-                [self.contentView.layer addSublayer:line];
+    // Cancel button
+    self.cancelButton = [[CVCustomActionSheetButton alloc] initWithAction:^{
+        for (CVCustomAction *action in self.actions) {
+            if (action.type == CVCustomActionTypeCancel) {
+                return action;
             }
         }
+        return [CVCustomAction new];
+    }() defaultConfiguration:[self configurationForType:CVCustomActionTypeCancel selected:NO]
+                                                    selectedConfiguration:[self configurationForType:CVCustomActionTypeCancel selected:YES]];
+    
+    self.cancelButton.frame = CGRectMake(ButtonMargin,
+                                         self.screenBounds.size.height - ButtonMargin - ButtonHeight,
+                                         contentView.frame.size.width,
+                                         ButtonHeight);
+    
+    [self.cancelButton addTarget:self action:@selector(selectedButton:) forControlEvents:UIControlEventTouchUpInside];
+    [self.window addSubview:self.cancelButton];
+    
+    // Scroll View
+    CVCustomActionSheetButtonConfiguration *defaultConfig = [self configurationForType:CVCustomActionTypeDefault selected:NO];
+    self.scrollView.backgroundColor = defaultConfig.backgroundColor;
+    self.scrollView.contentSize = contentView.frame.size;
+    self.scrollView.frame = ^{
+        CGRect frame;
+        frame.size.width = contentView.frame.size.width;
+        frame.size.height = MIN(ButtonHeight * MaxVisibleButtons, contentView.frame.size.height);
+        frame.origin.x = ButtonMargin;
+        frame.origin.y = CGRectGetMinY(_cancelButton.frame) - ButtonMargin - frame.size.height;
+        return frame;
+    }();
+    [self.scrollView.subviews makeObjectsPerformSelector:@selector(removeFromSuperview)];
+    [self.scrollView addSubview:contentView];
+    [self.window addSubview:self.scrollView];
+    
+    self.backgroundView.alpha = 1;
+}
+
+- (void)dismiss
+{
+    [self.cancelButton removeFromSuperview];
+    [self.scrollView removeFromSuperview];
+    [self.backgroundView removeFromSuperview];
+}
+
+- (void)selectedButton:(id)sender
+{
+    CVCustomActionSheetButton *button = (CVCustomActionSheetButton *)sender;
+    
+    if (button.action.handler) {
+        button.action.handler(button.action);
+    }
+    
+    [self dismiss];
+}
+
+#pragma mark - Styling
+
+- (void)setButtonConfiguration:(CVCustomActionSheetButtonConfiguration *)buttonConfiguration
+                       forType:(CVCustomActionType)type
+                      selected:(BOOL)selected
+{
+    NSParameterAssert(buttonConfiguration);
+    NSParameterAssert(type);
+}
+
+- (CVCustomActionSheetButtonConfiguration *)configurationForType:(CVCustomActionType)type
+                                                        selected:(BOOL)selected
+{
+    return [CVCustomActionSheetButtonConfiguration defaultConfigurationForType:type selected:selected];
+}
+
+#pragma mark - Buttons
+
+- (UIView *)contentView
+{
+    UIView *contentView = [[UIView alloc] initWithFrame:^{
+        CGRect frame = CGRectZero;
+        frame.size.width = CGRectGetWidth(self.screenBounds) - (ButtonMargin * 2);
+        frame.size.height = ButtonHeight * [self occurrencesOfActionType:CVCustomActionTypeDefault];
+        return frame;
+    }()];
+    
+    NSInteger i = 0;
+    for (CVCustomAction *action in self.actions) {
+        if (action.type == CVCustomActionTypeCancel) {
+            continue;
+        }
+        
+        CVCustomActionSheetButton *button = [[CVCustomActionSheetButton alloc] initWithAction:action
+                                                                         defaultConfiguration:[self configurationForType:action.type selected:NO]
+                                                                        selectedConfiguration:[self configurationForType:action.type selected:YES]];
+        button.frame = CGRectMake(0, ButtonHeight * i, CGRectGetWidth(contentView.bounds), ButtonHeight);
+        [button addTarget:self action:@selector(selectedButton:) forControlEvents:UIControlEventTouchUpInside];
+        [contentView addSubview:button];
         
         i++;
     }
     
-    if ([optionTitles count] > buttonCountMax) {
-        
-        CALayer *lineTop = [CALayer layer];
-        lineTop.backgroundColor = self.lineColor.CGColor;
-        lineTop.frame = CGRectMake(0, -1, kButtonWidth, 1);
-        [self.scrollView.layer addSublayer:lineTop];
-        
-        CALayer *lineBottom = [CALayer layer];
-        lineBottom.backgroundColor = self.lineColor.CGColor;
-        lineBottom.frame = CGRectMake(0, self.scrollView.contentSize.height, kButtonWidth, 1);
-        [self.scrollView.layer addSublayer:lineBottom];
+    // Draw the lines
+    for (int i = 0; i < self.actions.count; i++) {
+        CVCustomActionSheetButtonConfiguration *config = [self configurationForType:CVCustomActionTypeDefault selected:YES];
+        CALayer *line = [CALayer layer];
+        line.backgroundColor = config.backgroundColor.CGColor;
+        line.frame = CGRectMake(0, i * ButtonHeight, CGRectGetWidth(contentView.bounds), 1);
+        [contentView.layer addSublayer:line];
     }
     
-    // Cancel
-    UIButton *cancel = [self cancelButton];
-    if ([optionTitles count] > buttonCountMax) {
-        cancel.frame = CGRectMake(buttonMargin, buttonCountMax * (buttonHeight + 1) + (buttonMargin/2), kButtonWidth, buttonHeight);
-    } else {
-        cancel.frame = CGRectMake(buttonMargin, (i * (buttonHeight + 1)) + (buttonMargin/2), kButtonWidth, buttonHeight);
+    return contentView;
+}
+
+#pragma mark Helpers
+
+- (CVCustomAction *)cancelAction
+{
+    for (CVCustomAction *action in self.actions) {
+        if (action.type == CVCustomActionTypeCancel) {
+            return action;
+        }
     }
-    [cancel setTitle:cancelTitle forState:UIControlStateNormal];
-    [self.contentView addSubview:cancel];
-    
-    // Content frame
-    CGRect frame = self.contentView.frame;
-    frame.size.height = cancel.frame.origin.y + cancel.frame.size.height;
-    frame.origin.y = kScreenSize.size.height;
-    self.contentView.frame = frame;
-    [self.window addSubview:self.contentView];
+    return nil;
 }
 
-#pragma mark Properties
-
-- (UIButton *)cancelButton
+- (NSInteger)occurrencesOfActionType:(CVCustomActionType)type
 {
-    UIButton *cancel = [UIButton buttonWithType:UIButtonTypeCustom];
-    [cancel setTitleColor:self.cancelTextColor forState:UIControlStateNormal];
-    cancel.titleLabel.font = self.buttonFont;
-    cancel.backgroundColor = self.cancelBackgroundColor;
-    
-    [cancel addTarget:self.actionSheet
-               action:@selector(cancel:)
-     forControlEvents:UIControlEventTouchUpInside];
-    
-    [cancel addTarget:self.actionSheet
-               action:@selector(buttonPress:)
-     forControlEvents:UIControlEventTouchDown];
-    
-    [cancel addTarget:self.actionSheet
-               action:@selector(buttonRelease:)
-     forControlEvents:UIControlEventTouchUpInside];
-    
-    [cancel addTarget:self.actionSheet
-               action:@selector(buttonRelease:)
-     forControlEvents:UIControlEventTouchUpOutside];
-    
-    return cancel;
-}
-
-- (UIButton *)optionButton
-{
-    UIButton *option = [UIButton buttonWithType:UIButtonTypeCustom];
-    [option setTitleColor:self.buttonTextColor forState:UIControlStateNormal];
-    option.titleLabel.font = self.buttonFont;
-    option.backgroundColor = self.buttonBackgroundColor;
-    
-    [option addTarget:self.actionSheet
-               action:@selector(buttonPress:)
-     forControlEvents:UIControlEventTouchDown];
-    
-    [option addTarget:self.actionSheet
-               action:@selector(buttonRelease:)
-     forControlEvents:UIControlEventTouchUpInside];
-    
-    [option addTarget:self.actionSheet
-               action:@selector(buttonRelease:)
-     forControlEvents:UIControlEventTouchUpOutside];
-    
-    [option addTarget:self.actionSheet
-               action:@selector(close:)
-     forControlEvents:UIControlEventTouchUpInside];
-    
-    return option;
-}
-
-#pragma mark - Buttons
-#pragma mark Actions
-
-
-- (void)show:(void(^)())showBlock
-cancelPressed:(CVCancelPressed)cancelBlock
-optionPressed:(CVOptionPressed)optionBlock
-{
-    self.cancelCompletion = cancelBlock;
-    self.optionCompletion = optionBlock;
-    [self setup];
-    
-    [UIView animateWithDuration:0.2
-                          delay:0.0
-                        options:UIViewAnimationOptionCurveEaseInOut
-                     animations:^(void){
-                         
-                         self.contentView.alpha = 1.0;
-                         self.backgroundView.alpha = 1.0f;
-                         
-                     } completion:nil];
-    
-    [UIView animateWithDuration:0.3
-                          delay:0.0
-         usingSpringWithDamping:0.6
-          initialSpringVelocity:0.0
-                        options:UIViewAnimationOptionCurveEaseIn animations:^(void) {
-                            
-                            CGRect frame = self.contentView.frame;
-                            frame.origin.y = kScreenSize.size.height - self.contentView.frame.size.height - buttonMargin;
-                            self.contentView.frame = frame;
-                            
-                            if (showBlock) showBlock();
-                            
-                        }
-                     completion:nil];
-}
-
-- (void)dismiss:(void(^)())completed
-{
-    [UIView animateWithDuration:0.2
-                          delay:0.0
-                        options:UIViewAnimationOptionCurveEaseInOut
-                     animations:^(void){
-                         
-                         self.backgroundView.alpha = 0.0;
-                         
-                         CGRect frame = self.contentView.frame;
-                         frame.origin.y = kScreenSize.size.height;
-                         self.contentView.frame = frame;
-                         
-                     }
-                     completion:^(BOOL finish){
-                         
-                         [self.backgroundView removeFromSuperview];
-                         self.backgroundView = nil;
-                         self.actionSheet = nil;
-                        
-                         if (completed) completed();
-                         
-                     }];
-}
-
-- (void)close:(id)sender
-{
-    UIButton *button = (UIButton*)sender;
-    NSString *buttonTitle = button.titleLabel.text;
-    
-    if (![optionTitles containsObject:buttonTitle]) return;
-    NSInteger buttonIndex = [optionTitles indexOfObject:buttonTitle];
-    
-    [self dismiss:^{
-        
-        if (self.optionCompletion) self.optionCompletion(buttonIndex, button.titleLabel.text);
-    }];
-}
-
-- (void)cancel:(id)sender
-{
-    [self dismiss:^{
-        
-        if (self.cancelCompletion) self.cancelCompletion();
-    }];
-}
-
-#pragma mark Highlighting
-
-- (void)scrollViewWillBeginDragging:(UIScrollView *)draggedScrollView
-{
-    for (UIView *subview in self.scrollView.subviews) {
-        
-        if (subview.tag == 0) continue;
-        [self buttonRelease:subview];
+    NSInteger count = 0;
+    for (CVCustomAction *action in self.actions) {
+        if (action.type == type) {
+            count++;
+        }
     }
+    return count;
 }
 
-- (void)buttonPress:(id)sender
+- (UIWindow *)window
 {
-    UIButton *button = (UIButton*)sender;
-    
-    if ([button.titleLabel.text isEqualToString:cancelTitle]) {
-        [button setTitleColor:self.selectedCancelTextColor forState:UIControlStateNormal];
-        [button setBackgroundColor:self.selectedCancelBackgroundColor];
-    } else {
-        [button setTitleColor:self.selectedButtonTextColor forState:UIControlStateNormal];
-        [button setBackgroundColor:self.selectedButtonBackgroundColor];
-    }
+    return [UIApplication sharedApplication].keyWindow;
 }
 
-- (void)buttonRelease:(id)sender
+- (CGRect)screenBounds
 {
-    UIButton *button = (UIButton*)sender;
-    
-    if ([button.titleLabel.text isEqualToString:cancelTitle]) {
-        [button setTitleColor:self.cancelTextColor forState:UIControlStateNormal];
-        [button setBackgroundColor:self.cancelBackgroundColor];
-    } else {
-        [button setTitleColor:self.buttonTextColor forState:UIControlStateNormal];
-        [button setBackgroundColor:self.buttonBackgroundColor];
-    }
+    return [[UIScreen mainScreen] bounds];
 }
 
 @end

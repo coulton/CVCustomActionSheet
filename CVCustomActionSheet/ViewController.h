@@ -7,7 +7,6 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "CVCustomActionSheet.h"
 
 @interface ViewController : UIViewController
 

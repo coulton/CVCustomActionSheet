@@ -7,8 +7,12 @@
 //
 
 #import "ViewController.h"
+#import "CVCustomActionSheet.h"
+#import "CVCustomAction.h"
 
 @interface ViewController ()
+
+@property (nonatomic) CVCustomActionSheet *actionSheet;
 
 @end
 
@@ -17,6 +21,7 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+    [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleLightContent];
 }
 
 - (void)didReceiveMemoryWarning
@@ -26,16 +31,24 @@
 
 - (IBAction)showActionSheet
 {
-    NSArray *buttons = @[ @"Apples", @"Oranges", @"Bananas" ];
-    CVCustomActionSheet *actionSheet = [[CVCustomActionSheet alloc] initWithOptions:buttons
-                                                               andCancelButtonTitle:@"Cancel"];
+    self.actionSheet = [[CVCustomActionSheet alloc] init];
     
-    [actionSheet show:nil
-        cancelPressed:nil
-        optionPressed:^(NSInteger buttonIndex, NSString *buttonTitle) {
-            
-            NSLog(@"Pressed button: %@ (%ld)", buttonTitle, (long)buttonIndex);
-        }];
+    NSArray *fruits = @[@"Apples", @"Oranges", @"Bananas", @"Peaches", @"Grapes", @"Blueberries"];
+    for (NSString *fruit in fruits) {
+        [self.actionSheet addAction:[CVCustomAction actionWithTitle:fruit
+                                                               type:CVCustomActionTypeDefault
+                                                            handler:^(CVCustomAction *action) {
+                                                                NSLog(@"%@", fruit);
+                                                            }]];
+    }
+    
+    [self.actionSheet addAction:[CVCustomAction actionWithTitle:@"Cancel"
+                                                           type:CVCustomActionTypeCancel
+                                                        handler:^(CVCustomAction *action) {
+                                                            NSLog(@"Cancel");
+                                                        }]];
+    
+    [self.actionSheet show];
 }
 
 @end
