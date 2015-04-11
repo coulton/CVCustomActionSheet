@@ -23,7 +23,6 @@
 		3EC5DA1E191B302000653A38 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3EC5D9FD191B302000653A38 /* Foundation.framework */; };
 		3EC5DA1F191B302000653A38 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3EC5DA01191B302000653A38 /* UIKit.framework */; };
 		3EC5DA34191B303100653A38 /* CVCustomActionSheet.m in Sources */ = {isa = PBXBuildFile; fileRef = 3EC5DA33191B303100653A38 /* CVCustomActionSheet.m */; };
-		3EC5DA39191B325900653A38 /* fruits.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 3EC5DA38191B325900653A38 /* fruits.jpg */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -61,7 +60,6 @@
 		3EC5DA1C191B302000653A38 /* XCTest.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = XCTest.framework; path = Library/Frameworks/XCTest.framework; sourceTree = DEVELOPER_DIR; };
 		3EC5DA32191B303100653A38 /* CVCustomActionSheet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CVCustomActionSheet.h; sourceTree = "<group>"; };
 		3EC5DA33191B303100653A38 /* CVCustomActionSheet.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CVCustomActionSheet.m; sourceTree = "<group>"; };
-		3EC5DA38191B325900653A38 /* fruits.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = fruits.jpg; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -142,7 +140,6 @@
 		3EC5DA04191B302000653A38 /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
-				3EC5DA38191B325900653A38 /* fruits.jpg */,
 				3EC5DA05191B302000653A38 /* CVCustomActionSheet-Info.plist */,
 				3EC5DA06191B302000653A38 /* InfoPlist.strings */,
 				3EC5DA09191B302000653A38 /* main.m */,
@@ -230,7 +227,6 @@
 			files = (
 				3EC5DA16191B302000653A38 /* Images.xcassets in Resources */,
 				3EC5DA08191B302000653A38 /* InfoPlist.strings in Resources */,
-				3EC5DA39191B325900653A38 /* fruits.jpg in Resources */,
 				3EC5DA11191B302000653A38 /* Main.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

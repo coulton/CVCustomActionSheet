@@ -3,26 +3,31 @@ CVCustomActionSheet
 
 A super-simple, customizable iOS 8 - styled ActionSheet... Now with blocks!
 
-![ss](https://raw.github.com/coultonvento/CVCustomActionSheet/master/ss.png)
-
 Usage
 ===================
 
-- Import “CVCustomActionSheet.h”
-- Init and present
-
+1. Import “CVCustomActionSheet.h”
+2. Init
+```
+CVCustomActionSheet *actionSheet = [[CVCustomActionSheet alloc] init];
+```
+3. Add actions
 
 ```
-CVCustomActionSheet *actionSheet = [[CVCustomActionSheet alloc] initWithOptions:@[@"Apples", @"Oranges", @"Bananas"] andCancelButtonTitle:@"Cancel"];
-[actionSheet show:^{} cancelPressed:^{} optionPressed:^(NSInteger buttonIndex, NSString *buttonTitle) { }];
+[actionSheet addAction:[CVCustomAction actionWithTitle:@"Option"
+                                                  type:CVCustomActionTypeDefault
+                                               handler:nil]];
+
+[actionSheet addAction:[CVCustomAction actionWithTitle:@"Cancel"
+                                                  type:CVCustomActionTypeCancel
+                                               handler:nil]];
+```
+4. And present!
+```
+[actionSheet show];
 ```
 
 Customization
 ===================
 
-Check out CVCustomActionSheet.h, you can customize literally everything. 
-
-- Custom Fonts
-- Button background & text colors
-- Line colors
-- Button heights
+Check out CVCustomActionSheetButtonConfiguration.h, you can customize literally everything. 
