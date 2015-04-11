@@ -13,6 +13,7 @@
 
 static CGFloat const ButtonHeight = 44;
 static CGFloat const ButtonMargin = 8;
+static CGFloat const AnimationDuration = 0.25;
 static NSInteger const MaxVisibleButtons = 4;
 
 @interface CVCustomActionSheet () <UIScrollViewDelegate>
@@ -59,11 +60,8 @@ static NSInteger const MaxVisibleButtons = 4;
     [self.actions addObject:action];
 }
 
-- (void)show
+- (void)setup
 {
-    NSAssert([self occurrencesOfActionType:CVCustomActionTypeDefault] > 0, @"Before presenting, you must have at least 1 default action.");
-    NSAssert([self occurrencesOfActionType:CVCustomActionTypeCancel] == 1, @"Before presenting, you must have a cancel button.");
-    
     UIView *contentView = [self contentView];
     
     // Cancel button
@@ -100,15 +98,66 @@ static NSInteger const MaxVisibleButtons = 4;
     [self.scrollView.subviews makeObjectsPerformSelector:@selector(removeFromSuperview)];
     [self.scrollView addSubview:contentView];
     [self.window addSubview:self.scrollView];
+}
+
+- (void)show
+{
+    NSAssert([self occurrencesOfActionType:CVCustomActionTypeDefault] > 0, @"Before presenting, you must have at least 1 default action.");
+    NSAssert([self occurrencesOfActionType:CVCustomActionTypeCancel] == 1, @"Before presenting, you must have a cancel button.");
     
-    self.backgroundView.alpha = 1;
+    [self setup];
+    
+    // Hide
+    CGRect finalScrollViewFrame = self.scrollView.frame;
+    CGRect finalCancelButtonFrame = self.cancelButton.frame;
+    CGFloat offset = CGRectGetMinY(self.scrollView.frame);
+    
+    self.backgroundView.alpha = 0;
+    
+    self.scrollView.frame = ({
+        CGRect frame = self.scrollView.frame;
+        frame.origin.y += offset;
+        frame;
+    });
+    
+    self.cancelButton.frame = ({
+        CGRect frame = self.cancelButton.frame;
+        frame.origin.y += offset;
+        frame;
+    });
+    
+    // Animate in
+    [UIView animateWithDuration:AnimationDuration
+                          delay:0
+         usingSpringWithDamping:1.0
+          initialSpringVelocity:1.0
+                        options:0
+                     animations:^{
+                         self.backgroundView.alpha = 1;
+                         self.scrollView.frame = finalScrollViewFrame;
+                         self.cancelButton.frame = finalCancelButtonFrame;
+                     } completion:nil];
 }
 
 - (void)dismiss
 {
-    [self.cancelButton removeFromSuperview];
-    [self.scrollView removeFromSuperview];
-    [self.backgroundView removeFromSuperview];
+    [UIView animateWithDuration:AnimationDuration
+                          delay:0
+         usingSpringWithDamping:1.0
+          initialSpringVelocity:1.0
+                        options:0
+                     animations:^{
+                         
+                         self.backgroundView.alpha = 0;
+                         self.scrollView.alpha = 0;
+                         self.cancelButton.alpha = 0;
+                     } completion:^(BOOL finished) {
+                         
+                         [self.cancelButton removeFromSuperview];
+                         [self.scrollView removeFromSuperview];
+                         [self.backgroundView removeFromSuperview];
+                     }];
+    
 }
 
 - (void)selectedButton:(id)sender
