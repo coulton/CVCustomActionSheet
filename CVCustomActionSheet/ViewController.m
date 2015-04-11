@@ -9,6 +9,7 @@
 #import "ViewController.h"
 #import "CVCustomActionSheet.h"
 #import "CVCustomAction.h"
+#import "CVCustomActionSheetButtonConfiguration.h"
 
 @interface ViewController ()
 
@@ -33,6 +34,13 @@
 {
     self.actionSheet = [[CVCustomActionSheet alloc] init];
     
+    // Style (opt)
+    CVCustomActionSheetButtonConfiguration *config = [CVCustomActionSheetButtonConfiguration configurationWithTextColor:[UIColor whiteColor]
+                                                                                                        backgroundColor:[UIColor blueColor]
+                                                                                                                   font:[UIFont systemFontOfSize:12]];
+    [self.actionSheet setButtonConfiguration:config forType:CVCustomActionTypeCancel selected:NO];
+    
+    // Add actions
     NSArray *fruits = @[@"Apples", @"Oranges", @"Bananas", @"Peaches", @"Grapes", @"Blueberries"];
     for (NSString *fruit in fruits) {
         [self.actionSheet addAction:[CVCustomAction actionWithTitle:fruit
@@ -48,6 +56,7 @@
                                                             NSLog(@"Cancel");
                                                         }]];
     
+    // Display
     [self.actionSheet show];
 }
 

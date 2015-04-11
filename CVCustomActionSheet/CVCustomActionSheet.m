@@ -13,8 +13,11 @@
 
 static CGFloat const ButtonHeight = 44;
 static CGFloat const ButtonMargin = 8;
-static CGFloat const AnimationDuration = 0.25;
 static NSInteger const MaxVisibleButtons = 4;
+
+static CGFloat const AnimationDuration = 0.25;
+static CGFloat const AnimationSpringDamping = 1.0;
+static CGFloat const AnimationInitialSpringVelocity = 1.0;
 
 @interface CVCustomActionSheet () <UIScrollViewDelegate>
 
@@ -36,6 +39,7 @@ static NSInteger const MaxVisibleButtons = 4;
     self = [super init];
     if (self) {
         self.actions = [[NSMutableArray alloc] init];
+        self.styles = [[NSMutableDictionary alloc] init];
         
         UIVisualEffect *effect = [UIBlurEffect effectWithStyle:UIBlurEffectStyleDark];
         _backgroundView = [[UIVisualEffectView alloc] initWithEffect:effect];
@@ -129,10 +133,11 @@ static NSInteger const MaxVisibleButtons = 4;
     // Animate in
     [UIView animateWithDuration:AnimationDuration
                           delay:0
-         usingSpringWithDamping:1.0
-          initialSpringVelocity:1.0
+         usingSpringWithDamping:AnimationSpringDamping
+          initialSpringVelocity:AnimationInitialSpringVelocity
                         options:0
                      animations:^{
+                         
                          self.backgroundView.alpha = 1;
                          self.scrollView.frame = finalScrollViewFrame;
                          self.cancelButton.frame = finalCancelButtonFrame;
@@ -143,8 +148,8 @@ static NSInteger const MaxVisibleButtons = 4;
 {
     [UIView animateWithDuration:AnimationDuration
                           delay:0
-         usingSpringWithDamping:1.0
-          initialSpringVelocity:1.0
+         usingSpringWithDamping:AnimationSpringDamping
+          initialSpringVelocity:AnimationInitialSpringVelocity
                         options:0
                      animations:^{
                          
@@ -173,17 +178,31 @@ static NSInteger const MaxVisibleButtons = 4;
 
 #pragma mark - Styling
 
+- (NSString *)configKeyForType:(CVCustomActionType)type
+                      selected:(BOOL)selected
+{
+    return [NSString stringWithFormat:@"%lu-%d", (long)type, selected ? 1 : 0];
+}
+
 - (void)setButtonConfiguration:(CVCustomActionSheetButtonConfiguration *)buttonConfiguration
                        forType:(CVCustomActionType)type
                       selected:(BOOL)selected
 {
     NSParameterAssert(buttonConfiguration);
     NSParameterAssert(type);
+    NSAssert([buttonConfiguration isKindOfClass:[CVCustomActionSheetButtonConfiguration class]], @"Not the correct class.");
+    
+    NSString *key = [self configKeyForType:type selected:selected];
+    self.styles[key] = buttonConfiguration;
 }
 
 - (CVCustomActionSheetButtonConfiguration *)configurationForType:(CVCustomActionType)type
                                                         selected:(BOOL)selected
 {
+    NSString *key = [self configKeyForType:type selected:selected];
+    if ([self.styles.allKeys containsObject:key]) {
+        return self.styles[key];
+    }
     return [CVCustomActionSheetButtonConfiguration defaultConfigurationForType:type selected:selected];
 }
 

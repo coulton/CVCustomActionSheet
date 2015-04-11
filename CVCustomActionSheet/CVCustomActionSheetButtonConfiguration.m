@@ -12,32 +12,27 @@
 
 @property (nonatomic) UIColor *textColor;
 @property (nonatomic) UIColor *backgroundColor;
-@property (nonatomic) UIColor *separatorColor;
 @property (nonatomic) UIFont *font;
 
 @end
 
 @implementation CVCustomActionSheetButtonConfiguration
 
-- (instancetype)initWithTextColor:(UIColor *)textColor
-                  backgroundColor:(UIColor *)backgroundColor
-                   separatorColor:(UIColor *)separatorColor
-                             font:(UIFont *)font
++ (instancetype)configurationWithTextColor:(UIColor *)textColor
+                           backgroundColor:(UIColor *)backgroundColor
+                                      font:(UIFont *)font
 {
-    self = [super init];
-    if (self) {
-        NSParameterAssert(textColor);
-        NSParameterAssert(backgroundColor);
-        NSParameterAssert(separatorColor);
-        NSParameterAssert(font);
-        
-        _textColor = textColor;
-        _backgroundColor = backgroundColor;
-        _font = font;
-        _separatorColor = separatorColor;
-    }
+    NSParameterAssert(textColor);
+    NSParameterAssert(backgroundColor);
+    NSParameterAssert(font);
     
-    return self;
+    CVCustomActionSheetButtonConfiguration *config = [[CVCustomActionSheetButtonConfiguration alloc] init];
+    
+    config.textColor = textColor;
+    config.backgroundColor = backgroundColor;
+    config.font = font;
+    
+    return config;
 }
 
 + (CVCustomActionSheetButtonConfiguration *)defaultConfigurationForType:(CVCustomActionType)type
@@ -47,15 +42,13 @@
     
     switch (type) {
         case CVCustomActionTypeDefault:
-            return [[CVCustomActionSheetButtonConfiguration alloc] initWithTextColor:[UIColor blackColor]
-                                                                     backgroundColor:[UIColor colorWithWhite:selected ? 0.9 : 1.0 alpha:1.0]
-                                                                      separatorColor:[UIColor blackColor]
-                                                                                font:[UIFont systemFontOfSize:15]];
+            return [CVCustomActionSheetButtonConfiguration configurationWithTextColor:[UIColor blackColor]
+                                                                      backgroundColor:[UIColor colorWithWhite:selected ? 0.9 : 1.0 alpha:1.0]
+                                                                                 font:[UIFont systemFontOfSize:15]];
         case CVCustomActionTypeCancel:
-            return [[CVCustomActionSheetButtonConfiguration alloc] initWithTextColor:[UIColor whiteColor]
-                                                                     backgroundColor:[UIColor colorWithWhite:selected ? 0.0 : 0.1 alpha:1.0]
-                                                                      separatorColor:[UIColor whiteColor]
-                                                                                font:[UIFont systemFontOfSize:15]];
+            return [CVCustomActionSheetButtonConfiguration configurationWithTextColor:[UIColor whiteColor]
+                                                                      backgroundColor:[UIColor colorWithWhite:selected ? 0.0 : 0.1 alpha:1.0]
+                                                                                 font:[UIFont systemFontOfSize:15]];
     }
 }
 

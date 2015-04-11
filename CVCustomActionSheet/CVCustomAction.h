@@ -18,7 +18,7 @@
  */
 typedef enum {
     CVCustomActionTypeDefault = 1,
-    CVCustomActionTypeCancel
+    CVCustomActionTypeCancel = 2
 } CVCustomActionType;
 
 /**

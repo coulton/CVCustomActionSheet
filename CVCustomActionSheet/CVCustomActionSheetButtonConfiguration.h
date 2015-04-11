@@ -19,15 +19,13 @@
  *
  *  @param textColor       The desired text color.
  *  @param backgroundColor The background color for the button.
- *  @param separatorColor  The color for the separator;
  *  @param font            The font.
  *
  *  @return A configuration object ready to pass on to a CVCustomAction.
  */
-- (instancetype)initWithTextColor:(UIColor *)textColor
-                  backgroundColor:(UIColor *)backgroundColor
-                   separatorColor:(UIColor *)separatorColor
-                             font:(UIFont *)font;
++ (instancetype)configurationWithTextColor:(UIColor *)textColor
+                           backgroundColor:(UIColor *)backgroundColor
+                                      font:(UIFont *)font;
 
 /**
  *  The default configuration to use when one isn't provided.
@@ -54,10 +52,5 @@
  *  The font for the button.
  */
 @property (nonatomic, readonly) UIFont *font;
-
-/**
- *  The color of the separators.
- */
-@property (nonatomic, readonly) UIColor *separatorColor;
 
 @end
