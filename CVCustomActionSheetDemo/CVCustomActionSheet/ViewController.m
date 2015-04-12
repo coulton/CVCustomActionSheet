@@ -22,7 +22,6 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleLightContent];
 }
 
 - (void)didReceiveMemoryWarning
@@ -35,9 +34,7 @@
     // Setup
     self.actionSheet = [[CVCustomActionSheet alloc] init];
     
-    __weak ViewController *weakSelf = self;
     self.actionSheet.dismissBlock = ^{
-        weakSelf.actionSheet = nil;
         NSLog(@"dismissed.");
     };
     

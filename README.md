@@ -1,7 +1,7 @@
 CVCustomActionSheet
 ===================
 
-A super-simple, customizable iOS 8 - styled ActionSheet... Now with blocks!
+A super-simple, customizable iOS 8 - styled action sheet... Now with blocks!
 
 Usage
 ===================

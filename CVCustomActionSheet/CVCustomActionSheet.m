@@ -14,6 +14,7 @@
 static CGFloat const ButtonHeight = 44;
 static CGFloat const ButtonMargin = 8;
 static NSInteger const MaxVisibleButtons = 4;
+static CGFloat const FallbackEffectViewOpacity = 0.75;
 
 static CGFloat const AnimationDuration = 0.25;
 static CGFloat const AnimationSpringDamping = 1.0;
@@ -22,10 +23,14 @@ static CGFloat const AnimationInitialSpringVelocity = 1.0;
 @interface CVCustomActionSheet () <UIScrollViewDelegate>
 
 @property (nonatomic) UIScrollView *scrollView;
-@property (nonatomic) UIVisualEffectView *backgroundView;
+@property (nonatomic) UIVisualEffectView *blurredBackgroundView;
+@property (nonatomic) UIView *transparentBackgroundView;
+@property (nonatomic) CVCustomActionSheetButton *cancelButton;
+
 @property (nonatomic) NSMutableArray *actions;
 @property (nonatomic) NSMutableDictionary *styles;
-@property (nonatomic) CVCustomActionSheetButton *cancelButton;
+@property (nonatomic) UIStatusBarStyle originalStatusBarStyle;
+
 @property (nonatomic, readonly) CGRect screenBounds;
 @property (nonatomic, readonly) UIWindow *window;
 @property (nonatomic, readonly) CVCustomAction *cancelAction;
@@ -40,12 +45,20 @@ static CGFloat const AnimationInitialSpringVelocity = 1.0;
     if (self) {
         self.actions = [[NSMutableArray alloc] init];
         self.styles = [[NSMutableDictionary alloc] init];
+        self.originalStatusBarStyle = [UIApplication sharedApplication].statusBarStyle;
         
-        UIVisualEffect *effect = [UIBlurEffect effectWithStyle:UIBlurEffectStyleDark];
-        _backgroundView = [[UIVisualEffectView alloc] initWithEffect:effect];
-        _backgroundView.alpha = 0;
-        _backgroundView.frame = [[UIScreen mainScreen] bounds];
-        [self.window addSubview:_backgroundView];
+        if (NSClassFromString(@"UIVisualEffectView")) {
+            UIVisualEffect *effect = [UIBlurEffect effectWithStyle:UIBlurEffectStyleDark];
+            _blurredBackgroundView = [[UIVisualEffectView alloc] initWithEffect:effect];
+            _blurredBackgroundView.alpha = 0;
+            _blurredBackgroundView.frame = self.screenBounds;
+            [self.window addSubview:_blurredBackgroundView];
+        } else {
+            _transparentBackgroundView = [[UIView alloc] initWithFrame:self.screenBounds];
+            _transparentBackgroundView.backgroundColor = [UIColor blackColor];
+            _transparentBackgroundView.alpha = 0;
+            [self.window addSubview:_transparentBackgroundView];
+        }
         
         _scrollView = [[UIScrollView alloc] initWithFrame:self.screenBounds];
         _scrollView.showsVerticalScrollIndicator = YES;
@@ -53,7 +66,8 @@ static CGFloat const AnimationInitialSpringVelocity = 1.0;
         [self.window addSubview:_scrollView];
         
         UITapGestureRecognizer *tapGesture = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(dismiss)];
-        [self.backgroundView addGestureRecognizer:tapGesture];
+        [self.blurredBackgroundView addGestureRecognizer:tapGesture];
+        [self.transparentBackgroundView addGestureRecognizer:tapGesture];
     }
     return self;
 }
@@ -116,7 +130,8 @@ static CGFloat const AnimationInitialSpringVelocity = 1.0;
     CGRect finalCancelButtonFrame = self.cancelButton.frame;
     CGFloat offset = CGRectGetMinY(self.scrollView.frame);
     
-    self.backgroundView.alpha = 0;
+    self.blurredBackgroundView.alpha = 0;
+    self.transparentBackgroundView.alpha = 0;
     
     self.scrollView.frame = ({
         CGRect frame = self.scrollView.frame;
@@ -130,6 +145,8 @@ static CGFloat const AnimationInitialSpringVelocity = 1.0;
         frame;
     });
     
+    [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleLightContent animated:YES];
+    
     // Animate in
     [UIView animateWithDuration:AnimationDuration
                           delay:0
@@ -138,7 +155,8 @@ static CGFloat const AnimationInitialSpringVelocity = 1.0;
                         options:0
                      animations:^{
                          
-                         self.backgroundView.alpha = 1;
+                         self.blurredBackgroundView.alpha = 1;
+                         self.transparentBackgroundView.alpha = FallbackEffectViewOpacity;
                          self.scrollView.frame = finalScrollViewFrame;
                          self.cancelButton.frame = finalCancelButtonFrame;
                      } completion:nil];
@@ -146,6 +164,8 @@ static CGFloat const AnimationInitialSpringVelocity = 1.0;
 
 - (void)dismiss
 {
+    [[UIApplication sharedApplication] setStatusBarStyle:self.originalStatusBarStyle];
+    
     [UIView animateWithDuration:AnimationDuration
                           delay:0
          usingSpringWithDamping:AnimationSpringDamping
@@ -153,14 +173,16 @@ static CGFloat const AnimationInitialSpringVelocity = 1.0;
                         options:0
                      animations:^{
                          
-                         self.backgroundView.alpha = 0;
+                         self.blurredBackgroundView.alpha = 0;
+                         self.transparentBackgroundView.alpha = 0;
                          self.scrollView.alpha = 0;
                          self.cancelButton.alpha = 0;
                      } completion:^(BOOL finished) {
                          
                          [self.cancelButton removeFromSuperview];
                          [self.scrollView removeFromSuperview];
-                         [self.backgroundView removeFromSuperview];
+                         [self.blurredBackgroundView removeFromSuperview];
+                         [self.transparentBackgroundView removeFromSuperview];
                          
                          if (self.dismissBlock) {
                              self.dismissBlock();
