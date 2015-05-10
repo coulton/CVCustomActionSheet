@@ -16,9 +16,13 @@ static CGFloat const ButtonMargin = 8;
 static NSInteger const MaxVisibleButtons = 4;
 static CGFloat const FallbackEffectViewOpacity = 0.75;
 
-static CGFloat const AnimationDuration = 0.25;
-static CGFloat const AnimationSpringDamping = 1.0;
-static CGFloat const AnimationInitialSpringVelocity = 1.0;
+static CGFloat const FadeInOutDuration = 0.25;
+static CGFloat const FadeInOutSpringDamping = 1.0;
+static CGFloat const FadeInOutInitialSpringVelocity = 1.0;
+
+static CGFloat const SnapDelay = 0.1;
+static CGFloat const ScrollViewSnapDamping = 0.25;
+static CGFloat const CancelButtonSnapDamping = 0.35;
 
 @interface CVCustomActionSheet () <UIScrollViewDelegate>
 
@@ -26,6 +30,7 @@ static CGFloat const AnimationInitialSpringVelocity = 1.0;
 @property (nonatomic) UIVisualEffectView *blurredBackgroundView;
 @property (nonatomic) UIView *transparentBackgroundView;
 @property (nonatomic) CVCustomActionSheetButton *cancelButton;
+@property (nonatomic) UIDynamicAnimator *animator;
 
 @property (nonatomic) NSMutableArray *actions;
 @property (nonatomic) NSMutableDictionary *styles;
@@ -46,6 +51,7 @@ static CGFloat const AnimationInitialSpringVelocity = 1.0;
         self.actions = [[NSMutableArray alloc] init];
         self.styles = [[NSMutableDictionary alloc] init];
         self.originalStatusBarStyle = [UIApplication sharedApplication].statusBarStyle;
+        self.animator = [[UIDynamicAnimator alloc] initWithReferenceView:self.window];
         
         if (NSClassFromString(@"UIVisualEffectView")) {
             UIVisualEffect *effect = [UIBlurEffect effectWithStyle:UIBlurEffectStyleDark];
@@ -147,29 +153,52 @@ static CGFloat const AnimationInitialSpringVelocity = 1.0;
     
     [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleLightContent animated:YES];
     
-    // Animate in
-    [UIView animateWithDuration:AnimationDuration
+    // Fade in
+    [UIView animateWithDuration:FadeInOutDuration
                           delay:0
-         usingSpringWithDamping:AnimationSpringDamping
-          initialSpringVelocity:AnimationInitialSpringVelocity
+         usingSpringWithDamping:FadeInOutSpringDamping
+          initialSpringVelocity:FadeInOutInitialSpringVelocity
                         options:0
                      animations:^{
                          
                          self.blurredBackgroundView.alpha = 1;
                          self.transparentBackgroundView.alpha = FallbackEffectViewOpacity;
-                         self.scrollView.frame = finalScrollViewFrame;
-                         self.cancelButton.frame = finalCancelButtonFrame;
                      } completion:nil];
+    
+    // Animate in
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(SnapDelay * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        
+        CGPoint finalScrollViewCenter = CGPointMake(CGRectGetMidX(finalScrollViewFrame), CGRectGetMidY(finalScrollViewFrame));
+        CGPoint finalCancelButtonCenter = CGPointMake(CGRectGetMidX(finalCancelButtonFrame), CGRectGetMidY(finalCancelButtonFrame));
+        NSArray *items = @[self.scrollView, self.cancelButton];
+        
+        UICollisionBehavior *collisionBehavior = [[UICollisionBehavior alloc] initWithItems:items];
+        [self.animator addBehavior:collisionBehavior];
+        
+        UISnapBehavior *scrollViewSnapBehavior = [[UISnapBehavior alloc] initWithItem:self.scrollView snapToPoint:finalScrollViewCenter];
+        scrollViewSnapBehavior.damping = ScrollViewSnapDamping;
+        [self.animator addBehavior:scrollViewSnapBehavior];
+        
+        UISnapBehavior *cancelButtonSnapBehavior = [[UISnapBehavior alloc] initWithItem:self.cancelButton snapToPoint:finalCancelButtonCenter];
+        cancelButtonSnapBehavior.damping = CancelButtonSnapDamping;
+        [self.animator addBehavior:cancelButtonSnapBehavior];
+        
+        UIDynamicItemBehavior *dynamicBehavior = [[UIDynamicItemBehavior alloc] initWithItems:items];
+        dynamicBehavior.allowsRotation = NO;
+        [self.animator addBehavior:dynamicBehavior];
+    });
 }
 
 - (void)dismiss
 {
     [[UIApplication sharedApplication] setStatusBarStyle:self.originalStatusBarStyle];
     
-    [UIView animateWithDuration:AnimationDuration
+    [self.animator removeAllBehaviors];
+    
+    [UIView animateWithDuration:FadeInOutDuration
                           delay:0
-         usingSpringWithDamping:AnimationSpringDamping
-          initialSpringVelocity:AnimationInitialSpringVelocity
+         usingSpringWithDamping:FadeInOutSpringDamping
+          initialSpringVelocity:FadeInOutInitialSpringVelocity
                         options:0
                      animations:^{
                          
